@@ -1,0 +1,37 @@
+{
+  "name": "instantmessenger",
+  "version": "1.0.0",
+  "description": "A project for IS 2024 Web classes",
+  "main": "index.js",
+  "scripts": {
+    "start": "nodemon",
+    "migrate:latest": "knex migrate:latest",
+    "migrate:make": "knex migrate:make --",
+    "seed:make": "knex seed:make --",
+    "seed": "knex seed:run"
+  },
+  "author": "Petar-Gabriel Matev",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/bcrypt": "^5.0.0",
+    "@types/convict": "^6.1.1",
+    "@types/express": "^4.17.17",
+    "@types/jsonwebtoken": "^9.0.1",
+    "@types/node": "^18.15.3",
+    "@types/pg": "^8.6.6",
+    "nodemon": "^2.0.21",
+    "ts-node": "^10.9.1",
+    "typescript": "^4.9.5"
+  },
+  "dependencies": {
+    "bcrypt": "^5.1.0",
+    "convict": "^6.2.4",
+    "dotenv": "^16.0.3",
+    "express": "^4.18.2",
+    "jsonwebtoken": "^9.0.0",
+    "knex": "^2.4.2",
+    "objection": "^3.0.1",
+    "pg": "^8.10.0",
+    "zod": "^3.21.4"
+  }
+}
