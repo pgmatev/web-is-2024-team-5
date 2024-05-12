@@ -2,7 +2,7 @@ abstract class BaseError {
     status: number;
     message: string;
 
-    constructor(status: number, message: string) {
+    protected constructor(status: number, message: string) {
         this.status = status;
         this.message = message;
     }
