@@ -1,5 +1,6 @@
 import {config} from "./config";
 import express, {json} from "express";
+import bodyParser from "body-parser";
 import http from "http";
 import mongoose from "mongoose";
 import {router as authRouter} from './routers/auth'
@@ -19,6 +20,7 @@ const app = express();
 const port = config.get("port");
 
 app.use(json());
+app.use(bodyParser.urlencoded({extended: false})); // parse urlencoded form-data
 app.use((req, res, next) => {
     console.log(`[${new Date().toISOString()}] ${req.method} ${req.url}`);
     next();

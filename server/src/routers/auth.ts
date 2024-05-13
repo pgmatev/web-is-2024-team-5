@@ -1,22 +1,62 @@
 import {Router, Response, Request, request} from 'express';
+import {requestHandler} from "../middlewares/request-handler";
+import {CreateUserSchema, UserService} from "../services/UserService";
+import {ZodError} from "zod";
+import * as bcrypt from 'bcrypt';
+
 
 const router: Router = Router();
+const userService = new UserService();
 
+router.get(
+    '/register',
+    requestHandler(async (req: Request, res: Response) => {
+        res.send(`
+        <h2>Register</h2>
+        <form action="/auth/register" method="POST">
+            <input type="text" name="name" placeholder="Username" required>
+            <input type="email" name="email" placeholder="Email" required>
+            <input type="password" name="password" placeholder="Password" required>
+            <button type="submit">Register</button>
+        </form>
+        `)
+    })
+);
 
-router.get('/register', async (req: Request, res: Response) => {
-    res.send("Register View");
-});
+router.get(
+    '/login',
+    requestHandler(async (req: Request, res: Response) => {
+        res.send("Login View");
+    })
+);
 
-router.get('/login', async (req: Request, res: Response) => {
-    res.send("Login View");
-});
+router.post(
+    '/register',
+    requestHandler(async (req: Request, res: Response) => {
+        try {
+            console.log('Request Body: ' + JSON.stringify(req.body));
+            const userInput = CreateUserSchema.parse(req.body);
+            userInput.password = await bcrypt.hash(userInput.password, 10);
+            const user = await userService.createUser(userInput);
+            res.status(201).send({
+                message: "User registered successfully.",
+                user, // TODO: to remove, preview only
+            });
+        } catch (err) {
+            if (err instanceof ZodError) {
+                res.status(400).send({message: "Please fill the fields in correctly."});
+            } else {
+                res.status(400).send({message: "Bad request. Please try again."});
+            }
+        }
+    })
+);
 
-router.post('/register', async (req: Request, res: Response) => {
-    res.status(201).send("User Created Successfully");
-});
+router.post(
+    '/login',
+    requestHandler(async (req: Request, res: Response) => {
 
-router.post('/login', async (req: Request, res: Response) => {
-    res.status(200).send("User Logged In Successfully");
-});
+    })
+);
 
 export {router}
