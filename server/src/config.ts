@@ -4,7 +4,10 @@ import dotenv from "dotenv";
 dotenv.config();
 
 const config = convict({
-    db: {},
+    uri: {
+        doc: "MongoDB URL",
+        env: "MONGODB_URI",
+    },
     port: {
         env: "PORT",
         format: "port",

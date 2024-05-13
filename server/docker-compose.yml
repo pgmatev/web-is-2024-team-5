@@ -1,16 +1,31 @@
-version: '3'
 services:
-  postgres:
-    container_name: instant-messenger_postgres
-    image: postgres:16.1
-    environment:
-      POSTGRES_DB: ${DATABASE_NAME}
-      POSTGRES_USER: ${DATABASE_USER}
-      POSTGRES_PASSWORD: ${DATABASE_PASSWORD}
+  mongodb:
+    image: mongo:latest
+    container_name: mongodb
     ports:
-      - ${DATABASE_PORT}:5432
+      - "27017:27017"
     volumes:
-      - instant-messenger-postgres:/var/lib/postgresql/data
+      - mongo_data:/data/db
+    environment:
+      MONGO_INITDB_DATABASE: ${DATABASE_NAME}
+      MONGO_INITDB_ROOT_USERNAME: ${DATABASE_USER} 
+      MONGO_INITDB_ROOT_PASSWORD: ${DATABASE_PASSWORD}
+    networks:
+      - mongo_network
+
+  mongo_client:
+    image: mongo:latest
+    container_name: mongo_client
+    command: ["mongo", "-u", "${DATABASE_USER}", "-p", "${DATABASE_PASSWORD}", "--authenticationDatabase", "${DATABASE_NAME}", "mongodb://mongodb:27017"]
+    depends_on:
+      - mongodb
+    networks:
+      - mongo_network
 
 volumes:
-    instant-messenger-postgres:
+  mongo_data:
+    driver: local
+
+networks:
+  mongo_network:
+    driver: bridge
