@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Chat</title>
+    <style>
+        body {
+            margin: 0;
+            padding-bottom: 3rem;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        #form {
+            background: rgba(0, 0, 0, 0.15);
+            padding: 0.25rem;
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            display: flex;
+            height: 3rem;
+            box-sizing: border-box;
+            backdrop-filter: blur(10px);
+        }
+
+        .input-label {
+            display: flex;
+            align-items: center;
+        }
+
+        .input {
+            border: none;
+            padding: 0 1rem;
+            flex-grow: 1;
+            border-radius: 2rem;
+            margin: 0.25rem;
+        }
+
+        .input#message {
+            flex-grow: 10;
+        }
+
+        .input:focus {
+            outline: none;
+        }
+
+        #form > button {
+            background: #333;
+            border: none;
+            padding: 0 1rem;
+            margin: 0.25rem;
+            border-radius: 3px;
+            outline: none;
+            color: #fff;
+        }
+
+        #messages {
+            list-style-type: none;
+            margin: 0;
+            padding: 0;
+        }
+
+        #messages > li {
+            padding: 0.5rem 1rem;
+        }
+
+        #messages > li:nth-child(odd) {
+            background: #efefef;
+        }
+    </style>
+</head>
+<body>
+<form id="sender" action="">
+    <input id="sender-token" autocomplete="off"/>
+    <button>Save sender</button>
+</form>
+<ul id="messages"></ul>
+<form id="form" action="">
+    <label class="input-label" for="to">To</label><input class="input" id="to" autocomplete="off"/>
+    <label class="input-label" for="message">Message</label><input class="input" id="message" autocomplete="off"/>
+    <button>Send</button>
+</form>
+<script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
+<script>
+  const senderForm = document.getElementById('sender');
+  const senderInput = document.getElementById('sender-token');
+  const form = document.getElementById('form');
+  const toInput = document.getElementById('to');
+  const messageInput = document.getElementById('message');
+  const ACCESS_TOKEN = 'accessToken';
+
+  let socket = null;
+
+  form.addEventListener('submit', (e) => {
+    e.preventDefault();
+
+    if (messageInput.value && toInput.value && socket) {
+      socket.emit('chatMessage', {
+        to: toInput.value,
+        message: messageInput.value,
+        isGroup: false,
+      });
+
+      const item = document.createElement('li');
+      item.textContent = `To: ${toInput.value}; Message: ${messageInput.value}`;
+      document.getElementById('messages').appendChild(item);
+      window.scrollTo(0, document.body.scrollHeight);
+
+      messageInput.value = '';
+    }
+  });
+
+  senderForm.addEventListener('submit', (e) => {
+    e.preventDefault();
+
+    sessionStorage.setItem(ACCESS_TOKEN, null);
+
+    if (socket) {
+      socket.disconnect();
+      document.getElementById('messages').innerHTML = '';
+    }
+
+    if (senderInput.value) {
+      sessionStorage.setItem(ACCESS_TOKEN, senderInput.value);
+    }
+
+    socket = io({
+      extraHeaders: {
+        Authorization: `Bearer ${sessionStorage.getItem(ACCESS_TOKEN) || ''}`,
+      },
+    });
+
+    socket.on('connect_error', (err) => {
+      console.log(JSON.stringify(err));
+    });
+
+    socket.on('chatMessage', (msg) => {
+      const item = document.createElement('li');
+      item.textContent = `From: ${msg.from}; Message: ${msg.message}`;
+      document.getElementById('messages').appendChild(item);
+      window.scrollTo(0, document.body.scrollHeight);
+    });
+  });
+</script>
+</body>
+</html>

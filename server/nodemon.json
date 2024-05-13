@@ -3,5 +3,6 @@
         "src",
         ".env"
     ],
+    "ext": "ts,js,json,html,css",
     "exec": "ts-node src/index.ts"
 }
