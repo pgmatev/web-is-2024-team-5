@@ -33,8 +33,11 @@ router.get(
 router.post(
     '/register',
     requestHandler(async (req: Request, res: Response) => {
+        if (await userService.findUserByEmail(req.body.email)) {
+            return res.status(400).send({message: "User with that email is already registered."})
+        }
+
         try {
-            console.log('Request Body: ' + JSON.stringify(req.body));
             const userInput = CreateUserSchema.parse(req.body);
             userInput.password = await bcrypt.hash(userInput.password, 10);
             const user = await userService.createUser(userInput);
