@@ -3,6 +3,8 @@ import {requestHandler} from "../middlewares/request-handler";
 import {CreateUserSchema, UserService} from "../services/UserService";
 import {ZodError} from "zod";
 import * as bcrypt from 'bcrypt';
+import jwt from 'jsonwebtoken';
+import {redirectIfAuthenticatedUnsafe} from "../middlewares/jwt-cookie-auth";
 
 
 const router: Router = Router();
@@ -10,6 +12,7 @@ const userService = new UserService();
 
 router.get(
     '/register',
+    redirectIfAuthenticatedUnsafe('/'),
     requestHandler(async (req: Request, res: Response) => {
         res.send(`
         <h2>Register</h2>
@@ -25,13 +28,22 @@ router.get(
 
 router.get(
     '/login',
+    redirectIfAuthenticatedUnsafe('/'),
     requestHandler(async (req: Request, res: Response) => {
-        res.send("Login View");
+        res.send(`
+        <h2>Login</h2>
+        <form action="/auth/login" method="POST">
+            <input type="email" name="email" placeholder="Email" required>
+            <input type="password" name="password" placeholder="Password" required>
+            <button type="submit">Login</button>
+        </form>
+        `);
     })
 );
 
 router.post(
     '/register',
+    redirectIfAuthenticatedUnsafe('/'),
     requestHandler(async (req: Request, res: Response) => {
         if (await userService.findUserByEmail(req.body.email)) {
             return res.status(400).send({message: "User with that email is already registered."})
@@ -57,8 +69,41 @@ router.post(
 
 router.post(
     '/login',
+    redirectIfAuthenticatedUnsafe('/'),
     requestHandler(async (req: Request, res: Response) => {
+        const {email, password} = req.body;
+        const user = await userService.findUserByEmail(email);
+        if (!user) {
+            return res.status(404).send({message: "User with this email does not exist."});
+        }
 
+        const passwordMatch = await bcrypt.compare(password, user.password);
+        if (!passwordMatch) {
+            return res.status(401).send({message: "Invalid password."});
+        }
+
+        const token = jwt.sign(
+            {id: user._id},
+            process.env.JWT_SECRET as string,
+            {
+                expiresIn: process.env.JWT_EXPIRE as string
+            }
+        );
+        res.cookie("token", token, {httpOnly: true});
+
+        return res.status(200).send({message: "User logged in successfully."});
+    })
+);
+
+router.get(
+    '/logout',
+    requestHandler(async (req: Request, res: Response) => {
+        if (req.cookies.token) {
+            res.clearCookie('token');
+            return res.status(200).send({message: "User successfully logged out."});
+        } else {
+            return res.status(401).send({message: "No user logged in."});
+        }
     })
 );
 
