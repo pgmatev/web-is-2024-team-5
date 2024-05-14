@@ -3,7 +3,7 @@ import {IUser, User} from "../models/UserModel";
 
 export const CreateUserSchema = z.object({
     email: z.string().email(),
-    name: z.string(),
+    username: z.string(),
     password: z.string(),
 });
 
