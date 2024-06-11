@@ -37,9 +37,13 @@ jobs:
       run: |
         services=$(docker-compose config --services)
         for service in $services; do
-          IMAGE_ID=$(docker images -q $service)
-          docker tag $IMAGE_ID ${{ steps.login-ecr.outputs.registry }}/${{ secrets.ECR_REPOSITORY_NAME }}:$service
-          docker push ${{ steps.login-ecr.outputs.registry }}/${{ secrets.ECR_REPOSITORY_NAME }}:$service
+            IMAGE_ID=$(docker images -q $service)
+            if [ ! -z "$IMAGE_ID" ]; then
+                docker tag $IMAGE_ID ***.dkr.ecr.***.amazonaws.com/***:$service
+                docker push ***.dkr.ecr.***.amazonaws.com/***:$service
+            else
+                echo "No image found for service: $service"
+            fi
         done
 
     - name: Deploy Docker images on EC2
