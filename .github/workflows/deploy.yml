@@ -44,8 +44,8 @@ jobs:
           for line in $image_info; do
             name=$(echo $line | awk '{print $1}')
             id=$(echo $line | awk '{print $2}')
-            docker tag $name:latest ${{ steps.login-ecr.outputs.registry }}/$name:latest
-            docker push ${{ steps.login-ecr.outputs.registry }}/$name:latest
+            docker tag $name:latest ${{ steps.login-ecr.outputs.registry }}/${{ secrets.ECR_REPOSITORY_NAME }}/$name:latest
+            docker push ${{ steps.login-ecr.outputs.registry }}/${{ secrets.ECR_REPOSITORY_NAME }}/$name:latest
           done
 
       - name: Deploy Docker images on EC2
