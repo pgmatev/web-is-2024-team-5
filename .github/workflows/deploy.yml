@@ -12,6 +12,7 @@ jobs:
     env:
       MONGODB_URI: ${{ secrets.MONGODB_URI }}
       API_URL: ${{ secrets.API_URL }}
+      REPOSITORY_NAME: ${{ secrets.ECR_REPOSITORY_NAME }}
 
     steps:
     - name: Checkout code
@@ -30,20 +31,8 @@ jobs:
 
     - name: Build and push Docker images
       run: |
-        docker compose down --rmi all --volumes --remove-orphans
-        docker rmi $(docker images -q)
         docker compose build
         docker compose push
-
-    - name: Tag and push Docker images to ECR
-      run: |
-        image_info=$(docker images --format "{{.Repository}} {{.ID}}")
-        for line in $image_info; do
-          name=$(echo $line | awk '{print $1}')
-          id=$(echo $line | awk '{print $2}')
-          docker tag $id ${{ steps.login-ecr.outputs.registry }}/${{ secrets.ECR_REPOSITORY_NAME }}:$name
-          docker push ${{ steps.login-ecr.outputs.registry }}/${{ secrets.ECR_REPOSITORY_NAME }}:$name
-        done
 
     - name: Deploy Docker images on EC2
       env:
