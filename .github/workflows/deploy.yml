@@ -21,18 +21,22 @@ jobs:
     - name: Set up Docker Buildx
       uses: docker/setup-buildx-action@v1
 
+    - name: Configure AWS credentials
+      uses: aws-actions/configure-aws-credentials@v1
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: ${{ env.REGION }}
+
     - name: Log in to Amazon ECR
       id: login-ecr
       uses: aws-actions/amazon-ecr-login@v1
-      with:
-        registry: ${{ env.ECR_REPOSITORY }}
-        mask-password: true
 
     - name: Build and push Docker images
       run: |
         docker-compose -f docker-compose.yml build
-        docker tag your-project-server:latest ${{ env.ECR_REPOSITORY }}:server-${{ env.IMAGE_TAG }}
-        docker tag your-project-client:latest ${{ env.ECR_REPOSITORY }}:client-${{ env.IMAGE_TAG }}
+        docker tag chat-app-server:latest ${{ env.ECR_REPOSITORY }}:server-${{ env.IMAGE_TAG }}
+        docker tag chat-app-client:latest ${{ env.ECR_REPOSITORY }}:client-${{ env.IMAGE_TAG }}
         docker push ${{ env.ECR_REPOSITORY }}:server-${{ env.IMAGE_TAG }}
         docker push ${{ env.ECR_REPOSITORY }}:client-${{ env.IMAGE_TAG }}
 
