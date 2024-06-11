@@ -30,8 +30,9 @@ jobs:
 
     - name: Build and push Docker images
       run: |
+        docker compose down --rmi all --volumes --remove-orphans
+        docker rmi $(docker images -q)
         docker compose build
-        $(aws ecr get-login --no-include-email --region $AWS_DEFAULT_REGION)
         docker compose push
 
     - name: Tag and push Docker images to ECR
