@@ -30,9 +30,8 @@ jobs:
 
     - name: Build and push Docker images
       run: |
-        docker compose down --rmi all --volumes --remove-orphans
-        docker rmi $(docker images -q)
         docker compose build
+        $(aws ecr get-login --no-include-email --region $AWS_DEFAULT_REGION)
         docker compose push
 
     - name: Tag and push Docker images to ECR
@@ -41,8 +40,8 @@ jobs:
         for line in $image_info; do
           name=$(echo $line | awk '{print $1}')
           id=$(echo $line | awk '{print $2}')
-          docker tag $id ***.dkr.ecr.***.amazonaws.com/***:$name
-          docker push ***.dkr.ecr.***.amazonaws.com/***:$name
+          docker tag $id ${{ steps.login-ecr.outputs.registry }}/${{ secrets.ECR_REPOSITORY_NAME }}:$name
+          docker push ${{ steps.login-ecr.outputs.registry }}/${{ secrets.ECR_REPOSITORY_NAME }}:$name
         done
 
     - name: Deploy Docker images on EC2
