@@ -34,9 +34,9 @@ jobs:
 
     - name: Tag and push Docker images to ECR
       run: |
-        for service in $(docker-compose config --services); do
+        services=$(docker-compose config --services)
+        for service in $services; do
           IMAGE_ID=$(docker images -q $service)
-          echo $IMAGE_ID
           docker tag $IMAGE_ID ${{ steps.login-ecr.outputs.registry }}/${{ secrets.ECR_REPOSITORY_NAME }}:$service
           docker push ${{ steps.login-ecr.outputs.registry }}/${{ secrets.ECR_REPOSITORY_NAME }}:$service
         done
