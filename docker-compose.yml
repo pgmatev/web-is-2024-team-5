@@ -8,7 +8,6 @@ services:
       - "3000:3000"
     environment:
       - MONGODB_URI=${MONGODB_URI}
-    image: ${REPOSITORY_NAME}/server
 
   client:
     build:
@@ -20,4 +19,3 @@ services:
       - server
     environment:
       - API_URL=${API_URL}
-    image: ${REPOSITORY_NAME}/server
