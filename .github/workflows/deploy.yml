@@ -37,7 +37,7 @@ jobs:
       run: |
         services=$(docker-compose config --services)
         for service in $services; do
-            IMAGE_ID=$(docker images -q $service)
+            IMAGE_ID=$(docker images -q web-is-2024-team-5-$service)
             if [ ! -z "$IMAGE_ID" ]; then
                 docker tag $IMAGE_ID ***.dkr.ecr.***.amazonaws.com/***:$service
                 docker push ***.dkr.ecr.***.amazonaws.com/***:$service
