@@ -33,9 +33,21 @@ jobs:
         env:
           AWS_DEFAULT_REGION: ${{ secrets.AWS_REGION }}
         run: |
+          docker compose down --rmi all --volumes --remove-orphans
+          docker rmi $(docker images -q)
           docker compose build
           $(aws ecr get-login --no-include-email --region $AWS_DEFAULT_REGION)
           docker compose push
+
+        - name: Tag and push Docker images to ECR
+          run: |
+            image_info=$(docker images --format "{{.Repository}} {{.ID}}")
+            for line in $image_info; do
+              name=$(echo $line | awk '{print $1}')
+              id=$(echo $line | awk '{print $2}')
+              docker tag $name:latest ${{ steps.login-ecr.outputs.registry }}/$name:latest
+              docker push ${{ steps.login-ecr.outputs.registry }}/$name:latest
+            done
 
       - name: Deploy Docker images on EC2
         env:
