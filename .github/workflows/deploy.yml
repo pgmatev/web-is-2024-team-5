@@ -24,18 +24,18 @@ jobs:
       id: login-ecr
       uses: aws-actions/amazon-ecr-login@v1
 
-    - name: Build and push Docker images with docker-compose
-      env:
-        MONGODB_URI: ${{ secrets.MONGODB_URI }}
-        API_URL: ${{ secrets.API_URL }}
-        ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-        IMAGE_TAG: ${{ github.sha }}
+    - name: Build and push Docker images
       run: |
-        sed -i "s|image: client|image: $ECR_REGISTRY/client:$IMAGE_TAG|g" docker-compose.yml
-        sed -i "s|image: server|image: $ECR_REGISTRY/server:$IMAGE_TAG|g" docker-compose.yml
-
         docker-compose build
         docker-compose push
+
+    - name: Tag and push Docker images to ECR
+      run: |
+        for service in $(docker-compose config --services); do
+          IMAGE_ID=$(docker images -q $service)
+          docker tag $IMAGE_ID ${{ steps.login-ecr.outputs.registry }}/${{ ECR_REPOSITORY_NAME }}:$service
+          docker push ${{ steps.login-ecr.outputs.registry }}/${{ ECR_REPOSITORY_NAME }}:$service
+        done
 
     - name: Deploy Docker images on EC2
       env:
@@ -65,3 +65,4 @@ jobs:
           # Run the containers with the latest images
           docker run -d --name client $ECR_REGISTRY/client:$IMAGE_TAG
           docker run -d --name server $ECR_REGISTRY/server:$IMAGE_TAG
+        EOF
