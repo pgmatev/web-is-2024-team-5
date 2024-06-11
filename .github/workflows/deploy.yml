@@ -33,8 +33,8 @@ jobs:
       run: |
         for service in $(docker-compose config --services); do
           IMAGE_ID=$(docker images -q $service)
-          docker tag $IMAGE_ID ${{ steps.login-ecr.outputs.registry }}/${{ ECR_REPOSITORY_NAME }}:$service
-          docker push ${{ steps.login-ecr.outputs.registry }}/${{ ECR_REPOSITORY_NAME }}:$service
+          docker tag $IMAGE_ID ${{ steps.login-ecr.outputs.registry }}/${{ secrets.ECR_REPOSITORY_NAME }}:$service
+          docker push ${{ steps.login-ecr.outputs.registry }}/${{ secrets.ECR_REPOSITORY_NAME }}:$service
         done
 
     - name: Deploy Docker images on EC2
