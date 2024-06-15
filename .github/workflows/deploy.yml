@@ -1,0 +1,79 @@
+name: Deploy Docker images to ECR and EC2
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    env:
+      MONGODB_URI: ${{ secrets.MONGODB_URI }}
+      API_URL: ${{ secrets.API_URL }}
+      REPOSITORY_NAME: ${{ secrets.ECR_REPOSITORY_NAME }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION }}
+
+      - name: Log in to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v1
+
+      - name: Build and push Docker images
+        env:
+          AWS_DEFAULT_REGION: ${{ secrets.AWS_REGION }}
+        run: |
+          docker compose down --rmi all --volumes --remove-orphans
+          docker rmi $(docker images -q)
+          docker compose build
+          docker compose push
+
+      - name: Tag and push Docker images to ECR
+        run: |
+          image_info=$(docker images --format "{{.Repository}} {{.ID}}")
+          for line in $image_info; do
+            name=$(echo $line | awk '{print $1}')
+            id=$(echo $line | awk '{print $2}')
+            docker tag $name:latest ${{ steps.login-ecr.outputs.registry }}/${{ secrets.ECR_REPOSITORY_NAME }}/$name:latest
+            docker push ${{ steps.login-ecr.outputs.registry }}/${{ secrets.ECR_REPOSITORY_NAME }}/$name:latest
+          done
+
+      - name: Deploy Docker images on EC2
+        env:
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          IMAGE_TAG: ${{ github.sha }}
+          EC2_INSTANCE_ID: ${{ secrets.EC2_INSTANCE_ID }}
+          EC2_SSH_KEY: ${{ secrets.EC2_SSH_KEY }}
+          EC2_SSH_USER: ${{ secrets.EC2_SSH_USER }}
+          AWS_REGION: ${{ secrets.AWS_REGION }}
+        run: |
+          echo "${{ env.EC2_SSH_KEY }}" > ec2-key.pem
+          chmod 600 ec2-key.pem
+
+          EC2_HOST=$(aws ec2 describe-instances --instance-ids $EC2_INSTANCE_ID --query "Reservations[0].Instances[0].PublicDnsName" --output text --region $AWS_REGION)
+
+          ssh -o StrictHostKeyChecking=no -i ec2-key.pem $EC2_SSH_USER@$EC2_HOST << 'EOF'
+            # Pull the latest Docker images
+            docker pull $ECR_REGISTRY/client:$IMAGE_TAG
+            docker pull $ECR_REGISTRY/server:$IMAGE_TAG
+
+            # Stop and remove existing containers
+            docker stop client || true
+            docker stop server || true
+            docker rm client || true
+            docker rm server || true
+
+            # Run the containers with the latest images
+            docker run -d --name client $ECR_REGISTRY/client:$IMAGE_TAG
+            docker run -d --name server $ECR_REGISTRY/server:$IMAGE_TAG
+          EOF
