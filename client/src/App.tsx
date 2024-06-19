@@ -1,35 +1,34 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import "./App.css";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { PublicOutlet } from "./components/auth/outlets/PublicOutlet";
+import { PrivateOutlet } from "./components/auth/outlets/PrivateOutlet";
+import { UserProvider } from "./contexts/UserContext";
+import { ChatList } from "./components/chat-list/ChatList";
+import { LoginForm } from "./components/auth/LoginForm";
+import { RegisterForm } from "./components/auth/RegisterForm";
+import { Home } from "./components/Home";
 
-function App() {
-  const [count, setCount] = useState(0)
-
+export function App() {
   return (
     <>
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
-}
+      <BrowserRouter>
+        <UserProvider>
+          <Routes>
+            <Route path="/" element={<Home />} />
 
-export default App
+            <Route path="/" element={<PublicOutlet />}>
+              <Route path="/login" element={<LoginForm />} />
+              <Route path="/register" element={<RegisterForm />} />
+            </Route>
+
+            <Route path="/" element={<PrivateOutlet />}>
+              <Route path="/chats" element={<ChatList />} />
+            </Route>
+
+            <Route path="*" element={<Navigate to="/" />} />
+          </Routes>
+        </UserProvider>
+      </BrowserRouter>
+    </>
+  );
+}
