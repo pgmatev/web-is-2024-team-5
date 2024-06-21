@@ -94,17 +94,22 @@ router.post(
         expiresIn: process.env.JWT_EXPIRE as string,
       }
     );
-    res.cookie("token", token, { httpOnly: false });
+    res.cookie("accessToken", token, { httpOnly: false });
 
-    return res.status(200).send({ message: "User logged in successfully." });
+    return res
+        .status(200)
+        .send({
+            message: "User logged in successfully.",
+            accessToken: token,
+        });
   })
 );
 
 router.get(
   "/logout",
   requestHandler(async (req: Request, res: Response) => {
-    if (req.cookies.token) {
-      res.clearCookie("token");
+    if (req.cookies.accessToken) {
+      res.clearCookie("accessToken");
       return res.status(200).send({ message: "User successfully logged out." });
     } else {
       return res.status(401).send({ message: "No user logged in." });
