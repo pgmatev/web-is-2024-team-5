@@ -34,16 +34,16 @@ jobs:
           AWS_DEFAULT_REGION: ${{ secrets.AWS_REGION }}
         run: |
           docker compose build client
-          docker tag web-is-2024-team-5-client:latest ${{ steps.login-ecr.outputs.registry }}/${{ secrets.ECR_REPOSITORY_NAME }}/client:latest
-          docker push ${{ steps.login-ecr.outputs.registry }}/${{ secrets.ECR_REPOSITORY_NAME }}/client:latest
+          docker tag web-is-2024-team-5-client:latest ${{ steps.login-ecr.outputs.registry }}/client:latest
+          docker push ${{ steps.login-ecr.outputs.registry }}/client:latest
 
       - name: Build and push Docker image for server
         env:
           AWS_DEFAULT_REGION: ${{ secrets.AWS_REGION }}
         run: |
           docker compose build server
-          docker tag web-is-2024-team-5-server:latest ${{ steps.login-ecr.outputs.registry }}/${{ secrets.ECR_REPOSITORY_NAME }}/server:latest
-          docker push ${{ steps.login-ecr.outputs.registry }}/${{ secrets.ECR_REPOSITORY_NAME }}/server:latest
+          docker tag web-is-2024-team-5-server:latest ${{ steps.login-ecr.outputs.registry }}/server:latest
+          docker push ${{ steps.login-ecr.outputs.registry }}/server:latest
 
       - name: Deploy Docker images on EC2
         env:
