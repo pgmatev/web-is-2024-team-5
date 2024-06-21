@@ -34,6 +34,7 @@ jobs:
           AWS_DEFAULT_REGION: ${{ secrets.AWS_REGION }}
         run: |
           docker compose build client
+          echo ${{ steps.login-ecr.outputs.registry }}
           docker tag web-is-2024-team-5-client:latest ${{ steps.login-ecr.outputs.registry }}/client:latest
           docker push ${{ steps.login-ecr.outputs.registry }}/client:latest
 
