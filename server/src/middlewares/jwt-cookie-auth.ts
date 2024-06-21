@@ -2,10 +2,20 @@ import jwt, { JwtPayload } from "jsonwebtoken";
 import { Request, Response, NextFunction } from "express";
 
 export function requireJwt(req: Request, res: Response, next: NextFunction) {
-  const token = req.headers.authorization;
+  let authHeader = req.headers.authorization;
+
+  // TODO: fix
+  if(!authHeader){
+    throw new TypeError();
+  }
+
+  const token = authHeader.split(' ')[1]
+
+  console.log(token) // TODO: remove
+
   try {
     const { userId } = jwt.verify(
-        token ? token : (() => { throw new TypeError() })(), // TODO: fix; also cookies
+      token,
       process.env.JWT_SECRET as string
     ) as JwtPayload;
     req.body.userId = userId;
