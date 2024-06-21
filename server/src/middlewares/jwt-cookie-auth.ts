@@ -4,16 +4,15 @@ import { Request, Response, NextFunction } from "express";
 export function requireJwt(req: Request, res: Response, next: NextFunction) {
   let authHeader = req.headers.authorization;
 
-  // TODO: fix
-  if(!authHeader){
-    throw new TypeError();
-  }
-
-  const token = authHeader.split(' ')[1]
-
-  console.log(token) // TODO: remove
-
   try {
+    // TODO: fix
+    if(!authHeader){
+      throw new TypeError();
+    }
+    const token = authHeader.split(' ')[1]
+
+    console.log(token) // TODO: remove
+
     const { userId } = jwt.verify(
       token,
       process.env.JWT_SECRET as string
