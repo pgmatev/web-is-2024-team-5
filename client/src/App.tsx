@@ -11,8 +11,8 @@ import { Home } from "./components/Home";
 export function App() {
   return (
     <>
-      <BrowserRouter>
-        <UserProvider>
+      <UserProvider>
+        <BrowserRouter>
           <Routes>
             <Route path="/" element={<Home />} />
 
@@ -27,8 +27,8 @@ export function App() {
 
             <Route path="*" element={<Navigate to="/" />} />
           </Routes>
-        </UserProvider>
-      </BrowserRouter>
+        </BrowserRouter>
+      </UserProvider>
     </>
   );
 }

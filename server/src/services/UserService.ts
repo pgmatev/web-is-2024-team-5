@@ -15,11 +15,7 @@ export class UserService {
   }
 
   async findUserByEmail(email: string) {
-    const user = await User.findOne({ email: email }).exec();
-    if (user) {
-      return user.toObject();
-    }
-    return undefined;
+    return await User.findOne({ email: email }).exec();
   }
 
   async getUserById(id: string) {

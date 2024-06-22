@@ -1,5 +1,7 @@
-import { useState, useCallback, FormEvent } from "react";
+import { useState, FormEvent } from "react";
 import { useNavigate } from "react-router-dom";
+import { authService } from "../../services/auth-service";
+import { useAsyncAction } from "../../hooks/useAsyncAction";
 
 export function LoginForm() {
   const [email, setEmail] = useState<string>("");
@@ -8,32 +10,17 @@ export function LoginForm() {
 
   const navigate = useNavigate();
 
-  const handleSubmit = useCallback(
+  const { trigger: handleSubmit } = useAsyncAction(
     async (e: FormEvent<HTMLFormElement>) => {
       e.preventDefault();
 
       try {
-        const response = await fetch(
-          `${import.meta.env.VITE_API_URL}/auth/login`,
-          {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({ email, password }),
-          }
-        );
-
-        if (!response.ok) {
-          throw new Error("Login failed");
-        }
-        console.log("made it to navigate?");
+        await authService.login({ email, password });
         navigate("/chats");
       } catch (error) {
         setError(true);
       }
-    },
-    [email, navigate, password]
+    }
   );
 
   return (
