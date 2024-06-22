@@ -1,5 +1,5 @@
 import mongoose, { Schema } from 'mongoose';
-import { IBase } from './BaseModel';
+import { BaseSchema, IBase } from './BaseModel';
 
 export interface IConversation extends IBase {
   type: 'group' | 'private';
@@ -55,5 +55,7 @@ const ConversationSchema: Schema<IConversation> = new Schema<IConversation>({
     required: false,
   }
 });
+
+ConversationSchema.add(BaseSchema);
 
 export const Conversation = mongoose.model<IConversation>('Conversation', ConversationSchema);

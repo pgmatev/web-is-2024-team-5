@@ -1,5 +1,5 @@
 import mongoose, { Schema } from 'mongoose';
-import { IBase } from './BaseModel';
+import { BaseSchema, IBase } from './BaseModel';
 
 export interface IAttachment extends IBase {
   messageId: mongoose.Types.ObjectId;
@@ -36,5 +36,7 @@ const AttachmentSchema: Schema<IAttachment> = new Schema<IAttachment>({
     },
   },
 });
+
+AttachmentSchema.add(BaseSchema);
 
 export const Attachment = mongoose.model<IAttachment>('Attachment', AttachmentSchema);

@@ -1,5 +1,5 @@
 import mongoose, { Schema } from "mongoose";
-import { IBase } from "./BaseModel";
+import { BaseSchema, IBase } from "./BaseModel";
 
 export interface IUser extends IBase {
   email: string;
@@ -53,5 +53,7 @@ const UserSchema: Schema<IUser> = new Schema<IUser>({
     },
   ],
 });
+
+UserSchema.add(BaseSchema);
 
 export const User = mongoose.model<IUser>("User", UserSchema);

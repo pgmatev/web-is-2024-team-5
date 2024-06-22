@@ -1,5 +1,5 @@
 import mongoose, { Schema } from "mongoose";
-import { IBase } from "./BaseModel";
+import { BaseSchema, IBase } from "./BaseModel";
 
 export interface IMessage extends IBase {
   conversationId: mongoose.Types.ObjectId;
@@ -15,15 +15,18 @@ const MessageSchema: Schema<IMessage> = new Schema<IMessage>({
     type: Schema.Types.ObjectId,
     ref: "Conversation",
     required: true,
+    index: true,
   },
   senderId: {
     type: Schema.Types.ObjectId,
     ref: "User",
     required: true,
+    index: true,
   },
   text: {
     type: String,
     required: false,
+    index: true,
   },
   attachments: [
     {
@@ -50,6 +53,8 @@ const MessageSchema: Schema<IMessage> = new Schema<IMessage>({
     },
   ],
 });
+
+MessageSchema.add(BaseSchema);
 
 export const Message = mongoose.model<IMessage>(
   "Message",
