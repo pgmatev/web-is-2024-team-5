@@ -7,6 +7,7 @@ import { router as authRouter } from './routers/auth';
 import { userRouter } from './routers/UserRouter';
 import { requireJwt } from './middlewares/jwt-cookie-auth';
 import cors from 'cors';
+import { accessLoggingMiddleware } from './middlewares';
 
 const mongoURI = process.env.MONGODB_URI as string;
 
@@ -23,10 +24,7 @@ app.use(json());
 app.use(cors());
 app.use(bodyParser.urlencoded({ extended: false })); // parse urlencoded form-data
 app.use(cookieParser());
-app.use((req, res, next) => {
-  console.log(`[${new Date().toISOString()}] ${req.method} ${req.url}`);
-  next();
-});
+app.use(accessLoggingMiddleware);
 
 app.get('/', (_req, res) => res.send('Hello world'));
 app.use('/auth', authRouter);
