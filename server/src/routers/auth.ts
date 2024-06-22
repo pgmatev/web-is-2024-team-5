@@ -4,6 +4,7 @@ import { CreateUserSchema, UserService } from "../services/UserService";
 import { ZodError } from "zod";
 import * as bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
+import {BadRequestError, NotFoundError, UnauthorizedError} from "../errors";
 
 const authRouter: Router = Router();
 const userService = new UserService();
@@ -41,9 +42,7 @@ authRouter.post(
   "/register",
   requestHandler(async (req: Request, res: Response) => {
     if (await userService.findUserByEmail(req.body.email)) {
-      return res
-        .status(400)
-        .send({ message: "User with that email is already registered." });
+        throw new BadRequestError("User with that email is already registered.");
     }
 
     try {
@@ -52,15 +51,12 @@ authRouter.post(
       const user = await userService.createUser(userInput);
       res.status(201).send({
         message: "User registered successfully.",
-        user, // TODO: to remove, preview only
       });
     } catch (err) {
       if (err instanceof ZodError) {
-        res
-          .status(400)
-          .send({ message: "Please fill the fields in correctly." });
+        throw new BadRequestError("Please fill the fields in correctly.");
       } else {
-        res.status(400).send({ message: "Bad request. Please try again." });
+        throw new BadRequestError("Bad request. Please try again.");
       }
     }
   })
@@ -72,14 +68,12 @@ authRouter.post(
     const { email, password } = req.body;
     const user = await userService.findUserByEmail(email);
     if (!user) {
-      return res
-        .status(404)
-        .send({ message: "User with this email does not exist." });
+      throw new NotFoundError("User with this email does not exist.");
     }
 
     const passwordMatch = await bcrypt.compare(password, user.password);
     if (!passwordMatch) {
-      return res.status(401).send({ message: "Invalid password." });
+      throw new UnauthorizedError("Invalid password.");
     }
 
     const token = jwt.sign(
@@ -89,7 +83,6 @@ authRouter.post(
         expiresIn: process.env.JWT_EXPIRE as string,
       }
     );
-    res.cookie("accessToken", token, { httpOnly: false });
 
     return res.status(200).send({
       message: "User logged in successfully.",
@@ -98,16 +91,17 @@ authRouter.post(
   })
 );
 
-authRouter.get(
-  "/logout",
-  requestHandler(async (req: Request, res: Response) => {
-    if (req.cookies.accessToken) {
-      res.clearCookie("accessToken");
-      return res.status(200).send({ message: "User successfully logged out." });
-    } else {
-      return res.status(401).send({ message: "No user logged in." });
-    }
-  })
-);
+// Client deletes local token only?
+// router.get(
+//   "/logout",
+//   requestHandler(async (req: Request, res: Response) => {
+//     if (req.cookies.accessToken) {
+//       res.clearCookie("accessToken");
+//       res.status(200).send({ message: "User successfully logged out." });
+//     } else {
+//       throw new UnauthorizedError("No user logged in.");
+//     }
+//   })
+// );
 
 export { authRouter };
