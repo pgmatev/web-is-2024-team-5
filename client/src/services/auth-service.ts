@@ -14,16 +14,16 @@ class AuthService {
 
   login(user: User) {
     this.handler?.(user);
-    window.localStorage.setItem("username", user.username);
+    window.localStorage.setItem('username', user.username);
   }
 
   logout() {
     this.handler?.(null);
-    window.localStorage.removeItem("username");
+    window.localStorage.removeItem('username');
   }
 
   getSavedUser() {
-    const savedUsername = window.localStorage.getItem("username");
+    const savedUsername = window.localStorage.getItem('username');
     return savedUsername ? { username: savedUsername } : null;
   }
 }

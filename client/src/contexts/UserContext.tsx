@@ -4,8 +4,8 @@ import React, {
   useEffect,
   useState,
   ReactNode,
-} from "react";
-import Cookies from "js-cookie";
+} from 'react';
+import Cookies from 'js-cookie';
 
 interface User {
   userId: string;
@@ -35,22 +35,22 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
           const userData = await response.json();
           setUser(userData);
         } else {
-          console.error("Failed to fetch user data");
+          console.error('Failed to fetch user data');
         }
       } catch (error) {
-        console.error("Error fetching user data:", error);
+        console.error('Error fetching user data:', error);
       }
     };
 
     const getUserInfoFromToken = () => {
-      const token = Cookies.get("token");
+      const token = Cookies.get('token');
       if (token) {
         try {
-          const decodedToken = JSON.parse(atob(token.split(".")[1]));
+          const decodedToken = JSON.parse(atob(token.split('.')[1]));
           const { userId } = decodedToken;
           fetchUserData(userId);
         } catch (error) {
-          console.error("Error decoding token:", error);
+          console.error('Error decoding token:', error);
         }
       }
     };
@@ -61,7 +61,7 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
   // Use a separate effect to listen for changes in the token
   useEffect(() => {
     const handleTokenChange = () => {
-      const newToken = Cookies.get("token");
+      const newToken = Cookies.get('token');
       if (newToken !== token) {
         setToken(newToken);
       }
@@ -83,7 +83,7 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
 export function useUser() {
   const context = useContext(UserContext);
   if (!context) {
-    throw new Error("useUser must be used within a UserProvider");
+    throw new Error('useUser must be used within a UserProvider');
   }
 
   return context;

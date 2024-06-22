@@ -1,23 +1,23 @@
-import { config } from "./config";
-import express, { json } from "express";
-import bodyParser from "body-parser";
-import cookieParser from "cookie-parser";
-import mongoose from "mongoose";
-import { router as authRouter } from "./routers/auth";
-import { userRouter } from "./routers/UserRouter";
-import { requireJwt } from "./middlewares/jwt-cookie-auth";
-import cors from "cors";
+import { config } from './config';
+import express, { json } from 'express';
+import bodyParser from 'body-parser';
+import cookieParser from 'cookie-parser';
+import mongoose from 'mongoose';
+import { router as authRouter } from './routers/auth';
+import { userRouter } from './routers/UserRouter';
+import { requireJwt } from './middlewares/jwt-cookie-auth';
+import cors from 'cors';
 
 const mongoURI = process.env.MONGODB_URI as string;
 
 mongoose
   .connect(mongoURI, {})
-  .then(() => console.log("Connected to MongoDB"))
-  .catch((err) => console.error("Error connecting to MongoDB:", err));
+  .then(() => console.log('Connected to MongoDB'))
+  .catch((err) => console.error('Error connecting to MongoDB:', err));
 
 //Server
 const app = express();
-const port = config.get("port");
+const port = config.get('port');
 
 app.use(json());
 app.use(cors());
@@ -28,15 +28,15 @@ app.use((req, res, next) => {
   next();
 });
 
-app.get("/", (_req, res) => res.send("Hello world"));
-app.use("/auth", authRouter);
-app.use("/users", userRouter);
+app.get('/', (_req, res) => res.send('Hello world'));
+app.use('/auth', authRouter);
+app.use('/users', userRouter);
 
 // temp route to test authentication
-app.get("/secret", requireJwt, (req, res) => {
+app.get('/secret', requireJwt, (req, res) => {
   console.log(req.body.user);
-  res.send("If you can view this page this means that you are authenticated.");
+  res.send('If you can view this page this means that you are authenticated.');
 });
 
 app.listen(port);
-console.log("Server started on port ", port);
+console.log('Server started on port ', port);

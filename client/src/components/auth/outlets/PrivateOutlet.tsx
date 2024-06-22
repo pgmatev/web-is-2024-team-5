@@ -1,5 +1,5 @@
-import { Navigate, Outlet, useLocation } from "react-router-dom";
-import { useUser } from "../../../contexts/UserContext";
+import { Navigate, Outlet, useLocation } from 'react-router-dom';
+import { useUser } from '../../../contexts/UserContext';
 
 function NavigateToLogin() {
   const location = useLocation();

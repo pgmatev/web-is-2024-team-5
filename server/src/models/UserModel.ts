@@ -1,5 +1,5 @@
-import mongoose, { Schema } from "mongoose";
-import { BaseSchema, IBase } from "./BaseModel";
+import mongoose, { Schema } from 'mongoose';
+import { BaseSchema, IBase } from './BaseModel';
 
 export interface IUser extends IBase {
   email: string;
@@ -41,14 +41,14 @@ const UserSchema: Schema<IUser> = new Schema<IUser>({
   conversations: [
     {
       type: Schema.Types.ObjectId,
-      ref: "Conversation",
+      ref: 'Conversation',
       required: false,
     },
   ],
   blockedConversations: [
     {
       type: Schema.Types.ObjectId,
-      ref: "Conversation",
+      ref: 'Conversation',
       required: false,
     },
   ],
@@ -56,4 +56,4 @@ const UserSchema: Schema<IUser> = new Schema<IUser>({
 
 UserSchema.add(BaseSchema);
 
-export const User = mongoose.model<IUser>("User", UserSchema);
+export const User = mongoose.model<IUser>('User', UserSchema);

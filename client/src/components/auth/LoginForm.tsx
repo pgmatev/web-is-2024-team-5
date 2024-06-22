@@ -1,9 +1,9 @@
-import { useState, useCallback, FormEvent } from "react";
-import { useNavigate } from "react-router-dom";
+import { useState, useCallback, FormEvent } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 export function LoginForm() {
-  const [email, setEmail] = useState<string>("");
-  const [password, setPassword] = useState<string>("");
+  const [email, setEmail] = useState<string>('');
+  const [password, setPassword] = useState<string>('');
   const [error, setError] = useState<boolean>(false);
 
   const navigate = useNavigate();
@@ -16,24 +16,24 @@ export function LoginForm() {
         const response = await fetch(
           `${import.meta.env.VITE_API_URL}/auth/login`,
           {
-            method: "POST",
+            method: 'POST',
             headers: {
-              "Content-Type": "application/json",
+              'Content-Type': 'application/json',
             },
             body: JSON.stringify({ email, password }),
-          }
+          },
         );
 
         if (!response.ok) {
-          throw new Error("Login failed");
+          throw new Error('Login failed');
         }
-        console.log("made it to navigate?");
-        navigate("/chats");
+        console.log('made it to navigate?');
+        navigate('/chats');
       } catch (error) {
         setError(true);
       }
     },
-    [email, navigate, password]
+    [email, navigate, password],
   );
 
   return (

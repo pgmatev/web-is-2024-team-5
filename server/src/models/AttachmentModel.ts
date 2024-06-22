@@ -39,4 +39,7 @@ const AttachmentSchema: Schema<IAttachment> = new Schema<IAttachment>({
 
 AttachmentSchema.add(BaseSchema);
 
-export const Attachment = mongoose.model<IAttachment>('Attachment', AttachmentSchema);
+export const Attachment = mongoose.model<IAttachment>(
+  'Attachment',
+  AttachmentSchema,
+);

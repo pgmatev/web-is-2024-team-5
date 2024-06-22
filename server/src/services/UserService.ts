@@ -1,5 +1,5 @@
-import { z } from "zod";
-import { IUser, User } from "../models/UserModel";
+import { z } from 'zod';
+import { IUser, User } from '../models/UserModel';
 
 export const CreateUserSchema = z.object({
   email: z.string().email(),

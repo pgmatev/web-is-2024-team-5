@@ -8,7 +8,7 @@ export interface IConversation extends IBase {
   groupInfo?: {
     name: string;
     adminId: mongoose.Types.ObjectId;
-  }
+  };
   lastMessage?: {
     id: mongoose.Types.ObjectId;
     date: Date;
@@ -53,9 +53,12 @@ const ConversationSchema: Schema<IConversation> = new Schema<IConversation>({
     },
     text: String,
     required: false,
-  }
+  },
 });
 
 ConversationSchema.add(BaseSchema);
 
-export const Conversation = mongoose.model<IConversation>('Conversation', ConversationSchema);
+export const Conversation = mongoose.model<IConversation>(
+  'Conversation',
+  ConversationSchema,
+);

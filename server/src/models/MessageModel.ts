@@ -1,5 +1,5 @@
-import mongoose, { Schema } from "mongoose";
-import { BaseSchema, IBase } from "./BaseModel";
+import mongoose, { Schema } from 'mongoose';
+import { BaseSchema, IBase } from './BaseModel';
 
 export interface IMessage extends IBase {
   conversationId: mongoose.Types.ObjectId;
@@ -13,13 +13,13 @@ export interface IMessage extends IBase {
 const MessageSchema: Schema<IMessage> = new Schema<IMessage>({
   conversationId: {
     type: Schema.Types.ObjectId,
-    ref: "Conversation",
+    ref: 'Conversation',
     required: true,
     index: true,
   },
   senderId: {
     type: Schema.Types.ObjectId,
-    ref: "User",
+    ref: 'User',
     required: true,
     index: true,
   },
@@ -31,7 +31,7 @@ const MessageSchema: Schema<IMessage> = new Schema<IMessage>({
   attachments: [
     {
       type: Schema.Types.ObjectId,
-      ref: "Attachment",
+      ref: 'Attachment',
       required: false,
     },
   ],
@@ -39,7 +39,7 @@ const MessageSchema: Schema<IMessage> = new Schema<IMessage>({
     {
       userId: {
         type: Schema.Types.ObjectId,
-        ref: "User",
+        ref: 'User',
       },
       emoji: String,
       required: false,
@@ -48,7 +48,7 @@ const MessageSchema: Schema<IMessage> = new Schema<IMessage>({
   readBy: [
     {
       type: Schema.Types.ObjectId,
-      ref: "User",
+      ref: 'User',
       required: false,
     },
   ],
@@ -56,7 +56,4 @@ const MessageSchema: Schema<IMessage> = new Schema<IMessage>({
 
 MessageSchema.add(BaseSchema);
 
-export const Message = mongoose.model<IMessage>(
-  "Message",
-  MessageSchema
-);
+export const Message = mongoose.model<IMessage>('Message', MessageSchema);
