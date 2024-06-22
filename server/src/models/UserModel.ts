@@ -1,20 +1,49 @@
-import mongoose, { Schema, Document } from "mongoose";
-import { BaseModel, IBase } from "./BaseModel";
+import mongoose, { Schema } from "mongoose";
+import { IBase } from "./BaseModel";
 
 export interface IUser extends IBase {
-  username: string;
   email: string;
+  firstName: string;
+  lastName: string;
   password: string;
-  channels: mongoose.Types.ObjectId[];
-  blockedUsers: mongoose.Types.ObjectId[];
+  isOnline: boolean; // online status
+  isActive: boolean; // account status
+  conversations: mongoose.Types.ObjectId[];
+  blockedConversations: mongoose.Types.ObjectId[];
 }
 
 const UserSchema: Schema<IUser> = new Schema<IUser>({
-  username: String,
-  email: String,
-  password: String,
-  channels: [{ type: Schema.Types.ObjectId, ref: "Channel" }],
-  blockedUsers: [{ type: Schema.Types.ObjectId, ref: "User" }],
+  email: {
+    type: String,
+    required: true,
+    unique: true,
+  },
+  firstName: {
+    type: String,
+    required: true,
+  },
+  lastName: {
+    type: String,
+    required: true,
+  },
+  password: {
+    type: String,
+    required: true,
+  },
+  conversations: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: "Conversation",
+      required: false,
+    },
+  ],
+  blockedConversations: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: "Conversation",
+      required: false,
+    },
+  ],
 });
 
 export const User = mongoose.model<IUser>("User", UserSchema);
