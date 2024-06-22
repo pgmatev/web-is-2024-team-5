@@ -1,10 +1,13 @@
-import { z } from "zod";
+import {z, ZodError} from "zod";
 import { IUser, User } from "../models/UserModel";
 
 export const CreateUserSchema = z.object({
-  email: z.string().email(),
+  email: z.string().email({message: "Email is required"}),
   username: z.string(),
-  password: z.string(),
+  password: z.string()
+      .min(6, {message: "Password must be at least 6 characters."})
+      .regex(/[A-Z]/, { message: "Password must contain at least one uppercase letter." })
+      .regex(/[^a-zA-Z0-9]/, { message: "Password must contain at least one symbol." })
 });
 
 type UserInput = z.infer<typeof CreateUserSchema>;
@@ -17,7 +20,7 @@ export class UserService {
   async findUserByEmail(email: string) {
     const user = await User.findOne({ email: email }).exec();
     if (user) {
-      return user.toObject();
+      return user;
     }
     return undefined;
   }
