@@ -83,7 +83,11 @@ const handleGroupMessage = (user: User, msg: IncomingChatMessage) => {
   // });
 };
 
-const handleDirectMessage = (user: User, msg: IncomingChatMessage) => {
+const handleDirectMessage = async (
+  user: User,
+  msg: IncomingChatMessage,
+  socket: Socket,
+) => {
   console.log(
     `User ${user.email} sent message to user ${msg.to}: "${msg.message}"`,
   );
@@ -105,6 +109,20 @@ const handleDirectMessage = (user: User, msg: IncomingChatMessage) => {
   //   text: msg.message,
   // });
 
+  // Filter the sockets in the currentUser's room and send
+  // to all except the one sending
+  const sockets = await io.in(`user:${user.id}`).fetchSockets();
+
+  sockets
+    .filter((s) => s.id !== socket.id)
+    .map((s) =>
+      s.emit('chatMessage', {
+        from: user.id,
+        source: user.id,
+        message: msg.message,
+      }),
+    );
+
   if (msg.to === user.id) {
     return;
   }
@@ -123,14 +141,14 @@ const handleDirectMessage = (user: User, msg: IncomingChatMessage) => {
   });
 };
 
-const onChatMessage = (user: User) => {
-  return (msg: IncomingChatMessage) => {
+const onChatMessage = (user: User, socket: Socket) => {
+  return async (msg: IncomingChatMessage) => {
     if (msg.isGroup) {
       handleGroupMessage(user, msg);
       return;
     }
 
-    handleDirectMessage(user, msg);
+    await handleDirectMessage(user, msg, socket);
   };
 };
 
@@ -158,7 +176,7 @@ const onConnection = async (socket: Socket) => {
 
   console.log(`User ${user.email} connected.`);
 
-  socket.on('chatMessage', onChatMessage(user));
+  socket.on('chatMessage', onChatMessage(user, socket));
 
   socket.on('disconnect', onDisconnect(user));
 
@@ -178,6 +196,6 @@ app.get('/', (req, res) => {
   res.sendFile(__dirname + '/static/html/index.html');
 });
 
-server.listen(config.get('port'), () => {
+server.listen(config.get('port'), '0.0.0.0', () => {
   console.log(`listening on *:${config.get('port')}`);
 });

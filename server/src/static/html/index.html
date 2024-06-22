@@ -135,6 +135,7 @@
 
     socket.on('chatMessage', (msg) => {
       const item = document.createElement('li');
+      // TODO: Filter if msg.from === currentUser.id
       item.textContent = `From: ${msg.from}; Message: ${msg.message}`;
       document.getElementById('messages').appendChild(item);
       window.scrollTo(0, document.body.scrollHeight);
