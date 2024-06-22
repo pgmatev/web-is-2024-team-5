@@ -1,30 +1,39 @@
-export interface User {
-  username: string;
-  password?: string;
+import { HttpService } from "./http-service";
+import { tokenStorage } from "../lib/token-storage";
+
+export interface UserLogin {
+  email: string;
+  password: string;
 }
 
-type AuthHandler = (user: User | null) => void;
+export interface UserRegister extends UserLogin {
+  email: string;
+  username: string;
+  name: string;
+}
 
 class AuthService {
-  private handler: AuthHandler | null = null;
+  private http = new HttpService();
 
-  setHandler(handler: AuthHandler | null) {
-    this.handler = handler;
+  async login(params: UserLogin) {
+    const body = await this.http.post<{ message: string; accessToken: string }>(
+      "/auth/login",
+      {
+        body: params,
+      }
+    );
+    await tokenStorage.setToken(body.accessToken);
   }
 
-  login(user: User) {
-    this.handler?.(user);
-    window.localStorage.setItem("username", user.username);
+  async register(params: UserRegister) {
+    await this.http.post<{ message: string }>("/auth/register", {
+      body: params,
+    });
+    // tokenStorage.setToken(body.token);
   }
 
-  logout() {
-    this.handler?.(null);
-    window.localStorage.removeItem("username");
-  }
-
-  getSavedUser() {
-    const savedUsername = window.localStorage.getItem("username");
-    return savedUsername ? { username: savedUsername } : null;
+  async logout() {
+    await tokenStorage.removeToken();
   }
 }
 

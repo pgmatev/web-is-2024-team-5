@@ -4,7 +4,7 @@ import { CreateUserSchema, UserService } from "../services/UserService";
 import { ZodError } from "zod";
 import * as bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
-import {BadRequestError, NotFoundError, UnauthorizedError} from "../errors";
+import { BadRequestError, NotFoundError, UnauthorizedError } from "../errors";
 
 const authRouter: Router = Router();
 const userService = new UserService();
@@ -42,7 +42,7 @@ authRouter.post(
   "/register",
   requestHandler(async (req: Request, res: Response) => {
     if (await userService.findUserByEmail(req.body.email)) {
-        throw new BadRequestError("User with that email is already registered.");
+      throw new BadRequestError("User with that email is already registered.");
     }
 
     try {
