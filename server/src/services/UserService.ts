@@ -15,10 +15,18 @@ export class UserService {
   }
 
   async findUserByEmail(email: string) {
-    return await User.findOne({ email: email });
+    const user = await User.findOne({ email: email }).exec();
+    if (user) {
+      return user.toObject();
+    }
+    return undefined;
   }
 
   async getUserById(id: string) {
-    return (await User.findById(id).lean().exec()) as IUser;
+    const user = await User.findById(id).exec();
+    if (user) {
+      return user.toObject();
+    }
+    return undefined;
   }
 }
