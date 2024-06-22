@@ -54,7 +54,9 @@ authRouter.post(
       });
     } catch (err) {
       if (err instanceof ZodError) {
-        throw new BadRequestError("Please fill the fields in correctly.");
+          return res.status(400).send({
+              errors: err.flatten(),
+          })
       } else {
         throw new BadRequestError("Bad request. Please try again.");
       }
@@ -91,17 +93,5 @@ authRouter.post(
   })
 );
 
-// Client deletes local token only?
-// router.get(
-//   "/logout",
-//   requestHandler(async (req: Request, res: Response) => {
-//     if (req.cookies.accessToken) {
-//       res.clearCookie("accessToken");
-//       res.status(200).send({ message: "User successfully logged out." });
-//     } else {
-//       throw new UnauthorizedError("No user logged in.");
-//     }
-//   })
-// );
 
 export { authRouter };
