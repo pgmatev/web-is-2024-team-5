@@ -30,6 +30,14 @@ const UserSchema: Schema<IUser> = new Schema<IUser>({
     type: String,
     required: true,
   },
+  isOnline: {
+    type: Boolean,
+    default: false,
+  },
+  isActive: {
+    type: Boolean,
+    default: true,
+  },
   conversations: [
     {
       type: Schema.Types.ObjectId,
