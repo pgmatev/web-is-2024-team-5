@@ -1,4 +1,3 @@
-import './App.css';
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
 import { PublicOutlet } from './components/auth/outlets/PublicOutlet';
 import { PrivateOutlet } from './components/auth/outlets/PrivateOutlet';
