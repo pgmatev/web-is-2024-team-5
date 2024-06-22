@@ -4,14 +4,12 @@ import { CreateUserSchema, UserService } from "../services/UserService";
 import { ZodError } from "zod";
 import * as bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
-import { redirectIfAuthenticatedUnsafe } from "../middlewares/jwt-cookie-auth";
 
-const router: Router = Router();
+const authRouter: Router = Router();
 const userService = new UserService();
 
-router.get(
+authRouter.get(
   "/register",
-  redirectIfAuthenticatedUnsafe("/"),
   requestHandler(async (req: Request, res: Response) => {
     res.send(`
         <h2>Register</h2>
@@ -25,9 +23,8 @@ router.get(
   })
 );
 
-router.get(
+authRouter.get(
   "/login",
-  redirectIfAuthenticatedUnsafe("/"),
   requestHandler(async (req: Request, res: Response) => {
     res.send(`
         <h2>Login</h2>
@@ -40,9 +37,8 @@ router.get(
   })
 );
 
-router.post(
+authRouter.post(
   "/register",
-  redirectIfAuthenticatedUnsafe("/"),
   requestHandler(async (req: Request, res: Response) => {
     if (await userService.findUserByEmail(req.body.email)) {
       return res
@@ -70,9 +66,8 @@ router.post(
   })
 );
 
-router.post(
+authRouter.post(
   "/login",
-  redirectIfAuthenticatedUnsafe("/"),
   requestHandler(async (req: Request, res: Response) => {
     const { email, password } = req.body;
     const user = await userService.findUserByEmail(email);
@@ -96,16 +91,14 @@ router.post(
     );
     res.cookie("accessToken", token, { httpOnly: false });
 
-    return res
-        .status(200)
-        .send({
-            message: "User logged in successfully.",
-            accessToken: token,
-        });
+    return res.status(200).send({
+      message: "User logged in successfully.",
+      accessToken: token,
+    });
   })
 );
 
-router.get(
+authRouter.get(
   "/logout",
   requestHandler(async (req: Request, res: Response) => {
     if (req.cookies.accessToken) {
@@ -117,4 +110,4 @@ router.get(
   })
 );
 
-export { router };
+export { authRouter };
