@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from 'react';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 interface UseAsyncActionResult<TArgs extends any[], T> {
@@ -12,7 +12,7 @@ interface UseAsyncActionResult<TArgs extends any[], T> {
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function useAsyncAction<TArgs extends any[], T>(
   action: (...args: TArgs) => Promise<T>,
-  initialState: { data?: T; loading?: boolean } = {}
+  initialState: { data?: T; loading?: boolean } = {},
 ): UseAsyncActionResult<TArgs, T> {
   const [loading, setLoading] = useState(initialState.loading ?? false);
   const [error, setError] = useState<unknown>();
@@ -51,7 +51,7 @@ export function useAsyncAction<TArgs extends any[], T>(
     (...args: TArgs) => {
       perform(...args).catch(() => {});
     },
-    [perform]
+    [perform],
   );
   useEffect(() => {
     return () => {

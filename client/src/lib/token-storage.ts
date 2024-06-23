@@ -1,5 +1,5 @@
-import { jwtDecode } from "jwt-decode";
-import { LocalStorage } from "./local-storage";
+import { jwtDecode } from 'jwt-decode';
+import { LocalStorage } from './local-storage';
 
 export interface UserInfo {
   userId: string;
@@ -9,7 +9,7 @@ export type AuthHandler = (user: UserInfo | undefined) => void;
 
 class TokenStorage {
   private handler: AuthHandler | undefined = undefined;
-  private storage = new LocalStorage("token");
+  private storage = new LocalStorage('token');
 
   setHandler(handler: AuthHandler | undefined) {
     this.handler = handler;
