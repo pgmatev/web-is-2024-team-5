@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { authService } from '../../services/auth-service';
 import { useAsyncAction } from '../../hooks/useAsyncAction';
 import styles from './LoginForm.module.css';
+import {ErrorComponent} from './ErrorComponent.tsx';
 
 export function LoginForm() {
   const [email, setEmail] = useState<string>('');
@@ -25,7 +26,7 @@ export function LoginForm() {
     <section className={styles['login-section']}>
       <h1>Welcome back, please Login</h1>
       <form onSubmit={handleSubmit} className={styles['login-form']}>
-        {!!error && <span>Could not log in</span>}
+        <ErrorComponent error={error} />
         <input
           type="email"
           name="email"
