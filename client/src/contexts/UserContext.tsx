@@ -6,9 +6,12 @@ import {
   useEffect,
 } from 'react';
 import { UserInfo, tokenStorage } from '../lib/token-storage';
+import { User, userService } from '../services/user-service';
+import { useAsyncAction } from '../hooks/useAsyncAction';
 
 interface UserContextType {
-  user: UserInfo | undefined;
+  user: User | undefined;
+  loading: boolean;
 }
 
 const UserContext = createContext<UserContextType | undefined>(undefined);
@@ -18,18 +21,40 @@ interface UserProviderProps {
 }
 
 export function UserProvider({ children }: UserProviderProps) {
-  const [user, setUser] = useState<UserInfo | undefined>(tokenStorage.userInfo);
+  const [userInfo, setUserInfo] = useState<UserInfo | undefined>(
+    tokenStorage.userInfo,
+  );
 
   useEffect(() => {
-    tokenStorage.setHandler(setUser);
+    tokenStorage.setHandler(setUserInfo);
+    trigger();
 
     return () => {
       tokenStorage.setHandler(undefined);
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  const [user, setUser] = useState<User | undefined>(undefined);
+
+  const { trigger, loading } = useAsyncAction(async () => {
+    if (userInfo) {
+      const responseUser = await userService.getUser(userInfo?.userId);
+      setUser(responseUser);
+      return;
+    }
+
+    setUser(undefined);
+  });
+
+  useEffect(() => {
+    trigger();
+  }, [trigger, userInfo]);
+
   return (
-    <UserContext.Provider value={{ user }}>{children}</UserContext.Provider>
+    <UserContext.Provider value={{ user, loading }}>
+      {children}
+    </UserContext.Provider>
   );
 }
 

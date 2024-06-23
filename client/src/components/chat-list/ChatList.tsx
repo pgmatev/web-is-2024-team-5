@@ -59,8 +59,7 @@ const chats: Chat[] = [
 ];
 
 export function ChatList() {
-  // const { user } = useUser();
-  // console.log(user, "WAS HERE BEBY");
+  console.log('HERE BEBY');
   return (
     <main className={styles['chats-section']}>
       <h1 className={styles['chats-title']}>Your chats list:</h1>

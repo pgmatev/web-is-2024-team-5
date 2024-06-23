@@ -14,6 +14,8 @@ export function App() {
         <BrowserRouter>
           <Header />
           <Routes>
+            <Route path="/" element={<Navigate to="/chats" />} />
+
             <Route path="/" element={<PublicOutlet />}>
               <Route path="/login" element={<LoginForm />} />
               <Route path="/register" element={<RegisterForm />} />

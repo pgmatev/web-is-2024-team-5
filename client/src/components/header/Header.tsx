@@ -1,27 +1,24 @@
 import { RiSearch2Line } from '@remixicon/react';
 import { useUser } from '../../contexts/UserContext';
 import styles from './Header.module.css';
-import { useAsync } from '../../hooks/useAsync';
-import { User, userService } from '../../services/user-service';
-import { useState } from 'react';
 import { authService } from '../../services/auth-service';
 import { useAsyncAction } from '../../hooks/useAsyncAction';
 
 export function Header() {
-  const { user: userInfo } = useUser();
+  const { user } = useUser();
 
-  const [user, setUser] = useState<User>();
+  // const [user, setUser] = useState<User>();
 
-  useAsync(async () => {
-    if (userInfo) {
-      const responseUser = await userService.getUser(userInfo.userId);
-      setUser(responseUser);
-    }
-  }, [userInfo]);
+  // useAsync(async () => {
+  //   if (userInfo) {
+  //     const responseUser = await userService.getUser(userInfo.userId);
+  //     setUser(responseUser);
+  //   }
+  // }, [userInfo]);
 
   const { trigger: logout } = useAsyncAction(async () => {
     await authService.logout();
-    setUser(undefined);
+    // setUser(undefined);
   });
 
   return (
