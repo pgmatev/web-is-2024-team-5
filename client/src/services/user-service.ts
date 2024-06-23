@@ -1,4 +1,4 @@
-import { HttpService } from "./http-service";
+import { HttpService } from './http-service';
 
 export interface User {
   id: number;
