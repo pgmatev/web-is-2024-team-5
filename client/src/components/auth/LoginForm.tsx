@@ -1,11 +1,11 @@
-import { useState, FormEvent } from "react";
-import { useNavigate } from "react-router-dom";
-import { authService } from "../../services/auth-service";
-import { useAsyncAction } from "../../hooks/useAsyncAction";
+import { useState, FormEvent } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { authService } from '../../services/auth-service';
+import { useAsyncAction } from '../../hooks/useAsyncAction';
 
 export function LoginForm() {
-  const [email, setEmail] = useState<string>("");
-  const [password, setPassword] = useState<string>("");
+  const [email, setEmail] = useState<string>('');
+  const [password, setPassword] = useState<string>('');
   const [error, setError] = useState<boolean>(false);
 
   const navigate = useNavigate();
@@ -16,11 +16,11 @@ export function LoginForm() {
 
       try {
         await authService.login({ email, password });
-        navigate("/chats");
+        navigate('/chats');
       } catch (error) {
         setError(true);
       }
-    }
+    },
   );
 
   return (

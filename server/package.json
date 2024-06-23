@@ -4,7 +4,8 @@
   "description": "A project for IS 2024 Web classes",
   "main": "index.js",
   "scripts": {
-    "start": "nodemon"
+    "start": "nodemon",
+    "prepare": "cd .. && husky install server/.husky"
   },
   "author": "Petar-Gabriel Matev",
   "license": "ISC",
@@ -18,9 +19,12 @@
     "@types/lodash": "^4.17.5",
     "@types/node": "^18.15.3",
     "@types/pg": "^8.6.6",
+    "husky": "^9.0.11",
+    "lint-staged": "^15.2.7",
     "nodemon": "^3.1.0",
+    "prettier": "^3.3.2",
     "ts-node": "^10.9.1",
-    "typescript": "^4.9.5"
+    "typescript": "^5.5.2"
   },
   "dependencies": {
     "bcrypt": "^5.1.0",
@@ -34,5 +38,10 @@
     "mongodb": "^6.6.1",
     "mongoose": "^8.3.4",
     "zod": "^3.21.4"
+  },
+  "lint-staged": {
+    "*.ts": [
+      "prettier --write"
+    ]
   }
 }

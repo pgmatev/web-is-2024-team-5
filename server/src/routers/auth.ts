@@ -1,48 +1,19 @@
-import { Router, Response, Request, request } from "express";
-import { requestHandler } from "../middlewares/request-handler";
-import { CreateUserSchema, UserService } from "../services/UserService";
-import { ZodError } from "zod";
-import * as bcrypt from "bcrypt";
-import jwt from "jsonwebtoken";
-import { BadRequestError, NotFoundError, UnauthorizedError } from "../errors";
+import { Router, Response, Request, request } from 'express';
+import { requestHandler } from '../middlewares/request-handler';
+import { CreateUserSchema, UserService } from '../services/UserService';
+import { ZodError } from 'zod';
+import * as bcrypt from 'bcrypt';
+import jwt from 'jsonwebtoken';
+import { BadRequestError, NotFoundError, UnauthorizedError } from '../errors';
 
 const authRouter: Router = Router();
 const userService = new UserService();
 
-authRouter.get(
-  "/register",
-  requestHandler(async (req: Request, res: Response) => {
-    res.send(`
-        <h2>Register</h2>
-        <form action="/auth/register" method="POST">
-            <input type="text" name="username" placeholder="Username" required>
-            <input type="email" name="email" placeholder="Email" required>
-            <input type="password" name="password" placeholder="Password" required>
-            <button type="submit">Register</button>
-        </form>
-        `);
-  })
-);
-
-authRouter.get(
-  "/login",
-  requestHandler(async (req: Request, res: Response) => {
-    res.send(`
-        <h2>Login</h2>
-        <form action="/auth/login" method="POST">
-            <input type="email" name="email" placeholder="Email" required>
-            <input type="password" name="password" placeholder="Password" required>
-            <button type="submit">Login</button>
-        </form>
-        `);
-  })
-);
-
 authRouter.post(
-  "/register",
+  '/register',
   requestHandler(async (req: Request, res: Response) => {
     if (await userService.findUserByEmail(req.body.email)) {
-      throw new BadRequestError("User with that email is already registered.");
+      throw new BadRequestError('User with that email is already registered.');
     }
 
     try {
@@ -50,32 +21,32 @@ authRouter.post(
       userInput.password = await bcrypt.hash(userInput.password, 10);
       const user = await userService.createUser(userInput);
       res.status(201).send({
-        message: "User registered successfully.",
+        message: 'User registered successfully.',
       });
     } catch (err) {
       if (err instanceof ZodError) {
-          return res.status(400).send({
-              errors: err.flatten(),
-          })
+        return res.status(400).send({
+          errors: err.flatten(),
+        });
       } else {
-        throw new BadRequestError("Bad request. Please try again.");
+        throw new BadRequestError('Bad request. Please try again.');
       }
     }
-  })
+  }),
 );
 
 authRouter.post(
-  "/login",
+  '/login',
   requestHandler(async (req: Request, res: Response) => {
     const { email, password } = req.body;
     const user = await userService.findUserByEmail(email);
     if (!user) {
-      throw new NotFoundError("User with this email does not exist.");
+      throw new NotFoundError('User with this email does not exist.');
     }
 
     const passwordMatch = await bcrypt.compare(password, user.password);
     if (!passwordMatch) {
-      throw new UnauthorizedError("Invalid password.");
+      throw new UnauthorizedError('Invalid password.');
     }
 
     const token = jwt.sign(
@@ -83,15 +54,14 @@ authRouter.post(
       process.env.JWT_SECRET as string,
       {
         expiresIn: process.env.JWT_EXPIRE as string,
-      }
+      },
     );
 
     return res.status(200).send({
-      message: "User logged in successfully.",
+      message: 'User logged in successfully.',
       accessToken: token,
     });
-  })
+  }),
 );
-
 
 export { authRouter };

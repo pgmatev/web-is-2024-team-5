@@ -4,8 +4,8 @@ import {
   useState,
   ReactNode,
   useEffect,
-} from "react";
-import { UserInfo, tokenStorage } from "../lib/token-storage";
+} from 'react';
+import { UserInfo, tokenStorage } from '../lib/token-storage';
 
 interface UserContextType {
   user: UserInfo | undefined;
@@ -37,7 +37,7 @@ export function UserProvider({ children }: UserProviderProps) {
 export function useUser() {
   const context = useContext(UserContext);
   if (!context) {
-    throw new Error("useUser must be used within a UserProvider");
+    throw new Error('useUser must be used within a UserProvider');
   }
 
   return context;

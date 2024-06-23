@@ -1,5 +1,5 @@
-import { HttpService } from "./http-service";
-import { tokenStorage } from "../lib/token-storage";
+import { HttpService } from './http-service';
+import { tokenStorage } from '../lib/token-storage';
 
 export interface UserLogin {
   email: string;
@@ -17,23 +17,23 @@ class AuthService {
 
   async login(params: UserLogin) {
     const body = await this.http.post<{ message: string; accessToken: string }>(
-      "/auth/login",
+      '/auth/login',
       {
         body: params,
-      }
+      },
     );
-    await tokenStorage.setToken(body.accessToken);
+    tokenStorage.setToken(body.accessToken);
   }
 
   async register(params: UserRegister) {
-    await this.http.post<{ message: string }>("/auth/register", {
+    await this.http.post<{ message: string }>('/auth/register', {
       body: params,
     });
     // tokenStorage.setToken(body.token);
   }
 
   async logout() {
-    await tokenStorage.removeToken();
+    tokenStorage.removeToken();
   }
 }
 
