@@ -11,11 +11,9 @@ export function App() {
   return (
     <>
       <UserProvider>
-        <Header></Header>
         <BrowserRouter>
+          <Header />
           <Routes>
-            <Route path="/chats" element={<ChatList />} />
-
             <Route path="/" element={<PublicOutlet />}>
               <Route path="/login" element={<LoginForm />} />
               <Route path="/register" element={<RegisterForm />} />
