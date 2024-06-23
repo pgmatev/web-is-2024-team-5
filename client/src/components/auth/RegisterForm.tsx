@@ -3,6 +3,7 @@ import styles from './RegisterForm.module.css';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAsyncAction } from '../../hooks/useAsyncAction';
 import { authService } from '../../services/auth-service';
+import { ErrorComponent } from './ErrorComponent.tsx';
 
 export function RegisterForm() {
   const [email, setEmail] = useState<string>('');
@@ -32,8 +33,7 @@ export function RegisterForm() {
     <section className={styles['register-section']}>
       <h1>Please fill in the following fields to register</h1>
       <form onSubmit={handleSubmit} className={styles['register-form']}>
-        {!!error && <span>Could not register</span>}
-
+        <ErrorComponent error={error} field="firstName" />
         <input
           type="text"
           name="firstName"
@@ -42,6 +42,7 @@ export function RegisterForm() {
           onChange={(event) => setFirstName(event.target.value)}
           required
         />
+        <ErrorComponent error={error} field="lastName" />
         <input
           type="text"
           name="lastName"
@@ -50,6 +51,7 @@ export function RegisterForm() {
           onChange={(event) => setLastName(event.target.value)}
           required
         />
+        <ErrorComponent error={error} field="email" />
         <input
           type="email"
           name="email"
@@ -58,6 +60,7 @@ export function RegisterForm() {
           onChange={(event) => setEmail(event.target.value)}
           required
         />
+        <ErrorComponent error={error} field="password" />
         <input
           type="password"
           name="password"
