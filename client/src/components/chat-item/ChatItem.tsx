@@ -16,7 +16,7 @@ export interface ChatItemProps {
 
 export function ChatItem({ chat }: ChatItemProps) {
   return (
-    <li data-channel-id={chat.chatId}>
+    <li data-channel-id={chat.chatId} className={styles["chat-item"]}>
       <div>
         <span className={styles['contact-name']}>{chat.chatName}</span>
         <span className={styles['contact-message']}>

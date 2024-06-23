@@ -5,8 +5,8 @@ import { UserProvider } from './contexts/UserContext';
 import { ChatList } from './components/chat-list/ChatList';
 import { LoginForm } from './components/auth/LoginForm';
 import { RegisterForm } from './components/auth/RegisterForm';
-import { Home } from './components/Home';
 import { Header } from './components/header/Header';
+import { Chat } from './components/chat/Chat';
 
 export function App() {
   return (
@@ -15,8 +15,6 @@ export function App() {
         <Header></Header>
         <BrowserRouter>
           <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/chats" element={<ChatList />} />
 
             <Route path="/" element={<PublicOutlet />}>
               <Route path="/login" element={<LoginForm />} />
@@ -25,6 +23,7 @@ export function App() {
 
             <Route path="/" element={<PrivateOutlet />}>
               <Route path="/chats" element={<ChatList />} />
+              <Route path="/chat" element={<Chat />} />
             </Route>
 
             <Route path="*" element={<Navigate to="/" />} />
