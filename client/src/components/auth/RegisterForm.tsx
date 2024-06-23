@@ -3,7 +3,7 @@ import styles from './RegisterForm.module.css';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAsyncAction } from '../../hooks/useAsyncAction';
 import { authService } from '../../services/auth-service';
-import { ErrorComponent } from './ErrorComponent.tsx';
+import { ErrorComponent } from '../error/ErrorComponent.tsx';
 
 export function RegisterForm() {
   const [email, setEmail] = useState<string>('');
