@@ -1,4 +1,6 @@
-/* global li styling applied in ChatItem.css */
+.error-list * {
+    margin: 0;
+}
 
 .error-list > ul {
     font-size: .5rem;
@@ -6,7 +8,6 @@
 
 .error-list > li {
     padding: 0;
-    margin: 0;
 }
 
 .error-basic {
