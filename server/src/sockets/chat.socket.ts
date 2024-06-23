@@ -1,13 +1,9 @@
 import { Server } from 'socket.io';
-import { NextFunction } from 'express';
+import { NextFunction, Request, Response } from 'express';
+import { authMiddleware } from '../middlewares';
 
 export const chatSocket = (io: Server) => {
-  io.engine.use(
-    onlyForHandshake((req, res, next) => {
-      console.log('Handshake:', req);
-      next();
-    }),
-  );
+  io.engine.use(onlyForHandshake(authMiddleware));
 
   io.of('/chat').on('connection', (socket) => {
     console.log('User connected:', socket.id);

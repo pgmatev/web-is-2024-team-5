@@ -1,1 +1,1 @@
-export * from './get-user-from-locals.helper';
+export * from './get-user-from-request-context.helper';

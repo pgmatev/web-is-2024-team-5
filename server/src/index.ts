@@ -21,7 +21,11 @@ declare module 'http' {
 }
 
 const server = http.createServer(app);
-const io = new Server(server); // <ClientToServerEvents, ServerToClientEvents>
+const io = new Server(server, {
+  cors: {
+    origin: '*',
+  },
+}); // <ClientToServerEvents, ServerToClientEvents>
 
 chatSocket(io);
 

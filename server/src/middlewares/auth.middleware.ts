@@ -35,6 +35,8 @@ export async function authMiddleware(
     res.status(401).send({ message: 'Unauthorized' });
     return;
   }
-  res.locals.user = user;
+
+  req.user = user;
+
   next();
 }
