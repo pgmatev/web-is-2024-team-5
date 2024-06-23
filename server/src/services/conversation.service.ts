@@ -27,6 +27,7 @@ export class ConversationService {
     const conversations = await Conversation.find({
       participants: { $all: userId },
     })
+      .sort({ updatedAt: -1 })
       .skip((page - 1) * limit)
       .limit(limit)
       .exec();

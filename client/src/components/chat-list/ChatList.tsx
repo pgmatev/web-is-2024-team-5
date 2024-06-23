@@ -1,73 +1,74 @@
 import styles from './ChatList.module.css';
-import { Chat, ChatItem } from '../chat-item/ChatItem';
-
-const chats: Chat[] = [
-  {
-    chatId: '1',
-    chatName: 'Grupa',
-    lastMessage: {
-      text: 'Hello',
-      senderName: 'Ivan',
-      timestamp: new Date(Date.now()),
-    },
-  },
-  {
-    chatId: '2',
-    chatName: 'Ivan',
-    lastMessage: {
-      text: 'Hello, how are you?',
-      senderName: 'Ivan',
-      timestamp: new Date(Date.now()),
-    },
-  },
-  {
-    chatId: '2',
-    chatName: 'Ivan',
-    lastMessage: {
-      text: 'Hello, how are you?',
-      senderName: 'Ivan',
-      timestamp: new Date(Date.now()),
-    },
-  },
-  {
-    chatId: '2',
-    chatName: 'Ivan',
-    lastMessage: {
-      text: 'Hello, how are you?',
-      senderName: 'Ivan',
-      timestamp: new Date(Date.now()),
-    },
-  },
-  {
-    chatId: '2',
-    chatName: 'Ivan',
-    lastMessage: {
-      text: 'Hello, how are you?',
-      senderName: 'Ivan',
-      timestamp: new Date(Date.now()),
-    },
-  },
-  {
-    chatId: '2',
-    chatName: 'Ivan',
-    lastMessage: {
-      text: 'Hello, how are you?',
-      senderName: 'Ivan',
-      timestamp: new Date(Date.now()),
-    },
-  },
-];
+import { ChatItem } from '../chat-item/ChatItem';
+import { useCallback, useEffect, useRef, useState } from 'react';
+import { useAsyncAction } from '../../hooks/useAsyncAction';
+import {
+  Conversation,
+  conversationService,
+} from '../../services/conversation-service';
 
 export function ChatList() {
-  console.log('HERE BEBY');
+  const [items, setItems] = useState<Conversation[]>([]);
+  const [page, setPage] = useState(1);
+  const [hasMore, setHasMore] = useState(true);
+
+  const observer = useRef<IntersectionObserver | null>(null);
+
+  const { trigger: fetchNextPage, loading } = useAsyncAction(
+    async (page: number) => {
+      const newConversations =
+        await conversationService.getPaginatedConversations(page);
+      newConversations.conversations.filter(
+        (conversation) => !items.find((item) => item.id === conversation.id),
+      );
+      setItems((items) => [...items, ...newConversations.conversations]);
+      setHasMore(newConversations.conversations.length > 0);
+    },
+  );
+
+  const lastItemRef = useCallback(
+    (node: HTMLDivElement | null) => {
+      if (loading) return;
+      if (observer.current) observer.current.disconnect();
+      observer.current = new IntersectionObserver((entries) => {
+        if (entries[0].isIntersecting && hasMore) {
+          setPage((prevPage) => prevPage + 1);
+        }
+      });
+      if (node) observer.current.observe(node);
+    },
+    [loading, hasMore],
+  );
+
+  useEffect(() => {
+    fetchNextPage(page);
+  }, [page]);
+
   return (
     <main className={styles['chats-section']}>
       <h1 className={styles['chats-title']}>Your chats list:</h1>
       <ul className={styles['chats']}>
-        {chats.length > 0
-          ? chats.map((chat) => <ChatItem chat={chat} />)
-          : `You don't have chats yet.`}
+        {items.map((item, index) => (
+          <div
+            ref={items.length === index + 1 ? lastItemRef : null}
+            key={item.id}
+          >
+            <ChatItem chat={item} />
+          </div>
+        ))}
+        {loading && <p>Loading...</p>}
       </ul>
     </main>
   );
+
+  // return (
+  //   <main className={styles['chats-section']}>
+  //     <h1 className={styles['chats-title']}>Your chats list:</h1>
+  //     <ul className={styles['chats']}>
+  //       {chats.length > 0
+  //         ? chats.map((chat) => <ChatItem chat={chat} />)
+  //         : `You don't have chats yet.`}
+  //     </ul>
+  //   </main>
+  // );
 }

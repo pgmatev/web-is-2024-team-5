@@ -60,6 +60,15 @@ const ConversationSchema: Schema<IConversation> = new Schema<IConversation>({
 
 ConversationSchema.add(BaseSchema);
 
+ConversationSchema.set('toObject', {
+  transform: (doc, ret, options) => {
+    ret.id = ret._id.toString();
+    delete ret._id;
+    delete ret.__v;
+    return ret;
+  },
+});
+
 export const Conversation = mongoose.model<IConversation>(
   'Conversation',
   ConversationSchema,
