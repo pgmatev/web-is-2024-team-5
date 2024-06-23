@@ -5,6 +5,7 @@ import { ZodError } from 'zod';
 import * as bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import { BadRequestError, NotFoundError, UnauthorizedError } from '../errors';
+import { createJwt } from '../services/JWTService';
 
 const authRouter: Router = Router();
 const userService = new UserService();
@@ -20,8 +21,10 @@ authRouter.post(
       const userInput = CreateUserSchema.parse(req.body);
       userInput.password = await bcrypt.hash(userInput.password, 10);
       const user = await userService.createUser(userInput);
+      const token = createJwt(user._id);
       res.status(201).send({
         message: 'User registered successfully.',
+        accessToken: token,
       });
     } catch (err) {
       if (err instanceof ZodError) {
@@ -49,13 +52,7 @@ authRouter.post(
       throw new UnauthorizedError('Invalid password.');
     }
 
-    const token = jwt.sign(
-      { userId: user._id },
-      process.env.JWT_SECRET as string,
-      {
-        expiresIn: process.env.JWT_EXPIRE as string,
-      },
-    );
+    const token = createJwt(user._id);
 
     return res.status(200).send({
       message: 'User logged in successfully.',
