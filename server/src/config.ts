@@ -4,9 +4,10 @@ import dotenv from 'dotenv';
 dotenv.config();
 
 const config = convict({
-  uri: {
-    doc: 'MongoDB URL',
+  mongoUri: {
     env: 'MONGODB_URI',
+    default: '',
+    nullable: false,
   },
   port: {
     env: 'PORT',
@@ -14,8 +15,11 @@ const config = convict({
     default: 3000,
   },
   jwt: {
-    secret: { env: 'JWT_SECRET' },
-    expiryTime: {
+    secret: {
+      env: 'JWT_SECRET',
+      default: 'secret',
+    },
+    expiresIn: {
       env: 'JWT_EXPIRE',
       default: '1h',
     },
