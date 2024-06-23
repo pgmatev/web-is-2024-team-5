@@ -3,11 +3,11 @@ import express, { json } from 'express';
 import bodyParser from 'body-parser';
 import cookieParser from 'cookie-parser';
 import mongoose from 'mongoose';
-import { router as authRouter } from './routers/auth';
+import { authRouter } from './routers/auth';
 import { userRouter } from './routers/UserRouter';
-import { requireJwt } from './middlewares/jwt-cookie-auth';
 import cors from 'cors';
 import { accessLoggingMiddleware } from './middlewares';
+import { authMiddleware } from './middlewares/auth';
 
 const mongoURI = process.env.MONGODB_URI as string;
 
@@ -31,7 +31,7 @@ app.use('/auth', authRouter);
 app.use('/users', userRouter);
 
 // temp route to test authentication
-app.get('/secret', requireJwt, (req, res) => {
+app.get('/secret', authMiddleware, (req, res) => {
   console.log(req.body.user);
   res.send('If you can view this page this means that you are authenticated.');
 });

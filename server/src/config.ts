@@ -13,7 +13,13 @@ const config = convict({
     format: 'port',
     default: 3000,
   },
-  jwt: {},
+  jwt: {
+    secret: { env: 'JWT_SECRET' },
+    expiryTime: {
+      env: 'JWT_EXPIRE',
+      default: '1h',
+    },
+  },
 });
 
 config.validate();

@@ -1,25 +1,25 @@
 import { Router } from 'express';
 import { UserService } from '../services/UserService';
 import { requestHandler } from '../middlewares/request-handler';
-import { requireJwt } from '../middlewares/jwt-cookie-auth';
 import { ForbiddenError } from '../errors';
-import { transformUser } from '../transformers/users-transformer';
+import { authMiddleware, getUserFromLocals } from '../middlewares/auth';
 
 export const userRouter = Router();
 const userService = new UserService();
 
 userRouter.get(
   '/:id',
-  requireJwt,
+  authMiddleware,
   requestHandler(async (req, res) => {
     const id = req.params['id'];
-    if (id !== req.body.userId) {
+    const loggedUser = getUserFromLocals(res);
+    console.log(id, loggedUser.id);
+    if (id !== loggedUser.id) {
       throw new ForbiddenError('Cannot access user');
     }
 
     const user = await userService.getUserById(id);
     console.log(user);
-    const transformedUser = transformUser(user);
-    res.send(transformedUser);
+    res.send(user);
   }),
 );

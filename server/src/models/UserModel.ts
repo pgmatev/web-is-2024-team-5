@@ -54,6 +54,14 @@ const UserSchema: Schema<IUser> = new Schema<IUser>({
   ],
 });
 
-UserSchema.add(BaseSchema);
+UserSchema.set('toObject', {
+  transform: (doc, ret, options) => {
+    delete ret.password;
+    ret.id = ret._id.toString();
+    delete ret._id;
+    delete ret.__v;
+    return ret;
+  },
+});
 
 export const User = mongoose.model<IUser>('User', UserSchema);
