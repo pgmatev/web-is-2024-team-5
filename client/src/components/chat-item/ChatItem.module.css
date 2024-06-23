@@ -1,20 +1,20 @@
-li {
+.chat-item {
   margin: 14px;
   padding: 14px;
-  border-radius: 8px;
+  border-radius: 12px;
   display: flex;
   flex-direction: row;
   justify-content: space-between;
   cursor: pointer;
 }
 
-div {
-  display: flex;
-  flex-direction: column;
+.chat-item:hover{
+  background-color: #afc38f;
 }
 
-li:hover {
-  background-color: #afc38f;
+.chat-item div {
+  display: flex;
+  flex-direction: column;
 }
 
 .contact-name {

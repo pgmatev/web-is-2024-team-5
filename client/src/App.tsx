@@ -6,6 +6,7 @@ import { ChatList } from './components/chat-list/ChatList';
 import { LoginForm } from './components/auth/LoginForm';
 import { RegisterForm } from './components/auth/RegisterForm';
 import { Header } from './components/header/Header';
+import { Chat } from './components/chat/Chat';
 
 export function App() {
   return (
@@ -23,6 +24,7 @@ export function App() {
 
             <Route path="/" element={<PrivateOutlet />}>
               <Route path="/chats" element={<ChatList />} />
+              <Route path="/chat" element={<Chat />} />
             </Route>
 
             <Route path="*" element={<Navigate to="/chats" />} />
