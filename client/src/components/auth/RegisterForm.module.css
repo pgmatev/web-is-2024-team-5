@@ -1,0 +1,65 @@
+.register-section {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    background-color: var(--bg);
+    margin: 8% 8%;
+    border-radius: 22px;
+    border-color: var(--main-col);
+    border-style: inset;
+}
+
+.register-section h1 {
+    color: var(--main-col);
+    margin: 12px;
+}
+
+.register-form {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    margin:22px 22px 0 22px;
+}
+
+.register-form input, .register-form button {
+    margin: 12px;
+    padding:6px 4px;
+    width: 260px;
+    border-radius: 8px;
+    border-color: var(--main-col);
+    border-style: inset;
+}
+
+.register-form button {
+    cursor: pointer;
+    width: 100px;
+    background-color: var(--purple-bg);
+    border-color: var(--dark-purple);
+}
+
+.link {
+    text-decoration: none;
+}
+
+.register-p {
+    font-size: 16px;
+    margin: 16px;
+    color: var(--dark-purple);
+}
+
+.register-p i {
+    text-decoration-line: underline;
+}
+
+@media only screen and (max-width: 400px) {
+    .register-form input, .register-form button {
+        width: 90%;
+        margin: 8px;
+    }
+
+    .register-form {
+        margin: 8px;
+    }
+}
