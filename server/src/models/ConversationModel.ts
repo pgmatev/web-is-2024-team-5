@@ -43,7 +43,6 @@ const ConversationSchema: Schema<IConversation> = new Schema<IConversation>({
       type: Schema.Types.ObjectId,
       ref: 'User',
     },
-    required: false,
   },
   lastMessage: {
     date: Date,
@@ -52,7 +51,6 @@ const ConversationSchema: Schema<IConversation> = new Schema<IConversation>({
       ref: 'User',
     },
     text: String,
-    required: false,
   },
 });
 

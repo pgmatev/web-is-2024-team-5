@@ -3,7 +3,7 @@ import cors from 'cors';
 import bodyParser from 'body-parser';
 import cookieParser from 'cookie-parser';
 import { accessLoggingMiddleware } from './middlewares';
-import { authRouter, userRouter } from './routers';
+import { authRouter, conversationRouter, userRouter } from './routers';
 
 export const app = express();
 
@@ -16,5 +16,6 @@ app.use(accessLoggingMiddleware);
 app.get('/', (_req, res) => res.send('Hello world'));
 app.use('/auth', authRouter);
 app.use('/users', userRouter);
+app.use('/conversations', conversationRouter);
 
 export default app;
