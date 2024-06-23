@@ -1,5 +1,6 @@
 import { Navigate, Outlet, useLocation } from 'react-router-dom';
 import { useUser } from '../../../contexts/UserContext';
+import { LoadingPage } from '../../LoadingPage/LoadingPage';
 
 function NavigateToLogin() {
   const location = useLocation();
@@ -7,6 +8,11 @@ function NavigateToLogin() {
 }
 
 export function PrivateOutlet() {
-  const { user } = useUser();
+  const { user, loading } = useUser();
+
+  if (loading) {
+    return <LoadingPage />;
+  }
+
   return user ? <Outlet /> : <NavigateToLogin />;
 }
