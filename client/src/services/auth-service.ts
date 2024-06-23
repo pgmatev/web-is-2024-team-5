@@ -8,8 +8,9 @@ export interface UserLogin {
 
 export interface UserRegister extends UserLogin {
   email: string;
-  username: string;
-  name: string;
+  firstName: string;
+  lastName: string;
+  password: string;
 }
 
 class AuthService {

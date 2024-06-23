@@ -1,0 +1,33 @@
+/* Keyframes for the spinning animation */
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+/* Styles for the loading page container */
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  background-color: #f0f2f5;
+}
+
+/* Styles for the loading icon */
+.icon {
+  font-size: 48px;
+  color: var(--main-col);
+  animation: spin 2s linear infinite;
+}
+
+/* Styles for the loading text */
+.text {
+  margin-top: 16px;
+  font-size: 18px;
+  color: var(--main-col);
+}

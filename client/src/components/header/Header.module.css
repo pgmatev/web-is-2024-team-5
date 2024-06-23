@@ -32,3 +32,9 @@
   right: 16px;
   color: var(--main-col);
 }
+
+@media only screen and (max-width: 480px) {
+  .search-input {
+    width: 130px;
+  }
+}

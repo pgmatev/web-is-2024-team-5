@@ -12,9 +12,10 @@ export function App() {
   return (
     <>
       <UserProvider>
-        <Header></Header>
         <BrowserRouter>
+          <Header />
           <Routes>
+            <Route path="/" element={<Navigate to="/chats" />} />
 
             <Route path="/" element={<PublicOutlet />}>
               <Route path="/login" element={<LoginForm />} />
@@ -26,7 +27,7 @@ export function App() {
               <Route path="/chat" element={<Chat />} />
             </Route>
 
-            <Route path="*" element={<Navigate to="/" />} />
+            <Route path="*" element={<Navigate to="/chats" />} />
           </Routes>
         </BrowserRouter>
       </UserProvider>

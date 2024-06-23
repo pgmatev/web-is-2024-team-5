@@ -1,7 +1,7 @@
 import { RequestHandler, Request, Response, NextFunction } from 'express';
 import { BaseError } from '../errors';
 
-export function requestHandler<T>(
+export function requestHandlerMiddleware<T>(
   handler: (req: Request, res: Response, next: NextFunction) => Promise<T>,
 ): RequestHandler {
   return async (req, res, next) => {

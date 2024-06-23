@@ -1,17 +1,18 @@
 import { Router, Response, Request, request } from 'express';
-import { requestHandler } from '../middlewares/request-handler';
-import { CreateUserSchema, UserService } from '../services/UserService';
+import { requestHandlerMiddleware } from '../middlewares/request-handler.middleware';
+import { CreateUserSchema, UserService } from '../services/user.service';
 import { ZodError } from 'zod';
 import * as bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import { BadRequestError, NotFoundError, UnauthorizedError } from '../errors';
+import { config } from '../config';
 
 const authRouter: Router = Router();
 const userService = new UserService();
 
 authRouter.post(
   '/register',
-  requestHandler(async (req: Request, res: Response) => {
+  requestHandlerMiddleware(async (req: Request, res: Response) => {
     if (await userService.findUserByEmail(req.body.email)) {
       throw new BadRequestError('User with that email is already registered.');
     }
@@ -37,23 +38,29 @@ authRouter.post(
 
 authRouter.post(
   '/login',
-  requestHandler(async (req: Request, res: Response) => {
+  requestHandlerMiddleware(async (req: Request, res: Response) => {
     const { email, password } = req.body;
+    const { secret, expiresIn } = config.get('jwt');
+
     const user = await userService.findUserByEmail(email);
+
     if (!user) {
       throw new NotFoundError('User with this email does not exist.');
     }
 
     const passwordMatch = await bcrypt.compare(password, user.password);
+
     if (!passwordMatch) {
       throw new UnauthorizedError('Invalid password.');
     }
 
     const token = jwt.sign(
-      { userId: user._id },
-      process.env.JWT_SECRET as string,
       {
-        expiresIn: process.env.JWT_EXPIRE as string,
+        userId: user._id,
+      },
+      secret,
+      {
+        expiresIn,
       },
     );
 
