@@ -1,7 +1,8 @@
 import { useState, FormEvent } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { authService } from '../../services/auth-service';
 import { useAsyncAction } from '../../hooks/useAsyncAction';
+import styles from "./LoginForm.module.css";
 
 export function LoginForm() {
   const [email, setEmail] = useState<string>('');
@@ -24,11 +25,11 @@ export function LoginForm() {
   );
 
   return (
-    <>
-      <h2>Login</h2>
-      <form onSubmit={handleSubmit}>
+    <section className={styles['login-section']}>
+      <h1>Welcome back, please Login</h1>
+      <form onSubmit={handleSubmit} className={styles['login-form']}>
         {error && <span>Could not log in</span>}
-        <input
+        <input 
           type="email"
           name="email"
           placeholder="Email"
@@ -36,7 +37,7 @@ export function LoginForm() {
           onChange={(event) => setEmail(event.target.value)}
           required
         />
-        <input
+        <input 
           type="password"
           name="password"
           placeholder="Password"
@@ -46,6 +47,10 @@ export function LoginForm() {
         />
         <button type="submit">Login</button>
       </form>
-    </>
+      <Link to={'/register'} className={styles['link']}>
+        <p className={styles['login-p']}>If you dont have an acount, <i>click here</i> to register</p>
+      </Link>
+      
+    </section>
   );
 }
