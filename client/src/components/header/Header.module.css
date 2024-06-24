@@ -13,6 +13,21 @@
   margin: 0;
 }
 
+.header-title div {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.logout-btn {
+  background: var(--purple-bg);
+  color: var(--dark-purple);
+  border-radius: 8px;
+  border-color: var(--dark-purple);
+  margin:0 8px;
+  padding: 4px;
+}
+
 .search-bar {
   margin: 10px 20px;
   position: relative;

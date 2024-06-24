@@ -1,6 +1,6 @@
 import styles from './ChatItem.module.css';
 
-export interface Chat {
+export interface Chatm {
   chatId: string;
   chatName: string;
   lastMessage: {
@@ -11,7 +11,7 @@ export interface Chat {
 }
 
 export interface ChatItemProps {
-  chat: Chat;
+  chat: Chatm;
 }
 
 export function ChatItem({ chat }: ChatItemProps) {

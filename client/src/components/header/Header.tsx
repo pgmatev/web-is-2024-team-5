@@ -26,8 +26,8 @@ export function Header() {
       <h1 className={styles['header-title']} id="user-name">
         {user ? (
           <div>
-            {`Welcome ${user.firstName}`}
-            <button onClick={logout}>Logout</button>
+            {`Welcome, ${user.firstName}`}
+            <button onClick={logout} className={styles['logout-btn']}>Logout</button>
           </div>
         ) : (
           'Please login'
