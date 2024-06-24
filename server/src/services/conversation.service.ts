@@ -55,7 +55,9 @@ export class ConversationService {
         participants: { $all: userIdsMatchingParticipantName },
       });
     }
-    const conversations = await Conversation.find(query);
+    const conversations = await Conversation.find(query)
+      .sort({ updatedAt: -1 })
+      .exec();
 
     if (conversations) {
       return conversations.map((conversation) => conversation.toObject());

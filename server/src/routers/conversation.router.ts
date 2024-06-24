@@ -6,7 +6,6 @@ import {
 } from '../services';
 import { authMiddleware, requestHandlerMiddleware } from '../middlewares';
 import { BadRequestError, ForbiddenError, NotFoundError } from '../errors';
-import { IConversation } from '../models/ConversationModel';
 import { getUserFromRequestContext } from '../helpers';
 
 export const conversationRouter = Router();
