@@ -5,6 +5,7 @@ import app from './app';
 import { IUser } from './models/UserModel';
 import { Server } from 'socket.io';
 import { chatSocket } from './sockets';
+import { ClientToServerEvents, ServerToClientEvents } from '../../shared/types';
 
 declare global {
   namespace Express {
@@ -21,11 +22,11 @@ declare module 'http' {
 }
 
 const server = http.createServer(app);
-const io = new Server(server, {
+const io = new Server<ClientToServerEvents, ServerToClientEvents>(server, {
   cors: {
     origin: '*',
   },
-}); // <ClientToServerEvents, ServerToClientEvents>
+});
 
 chatSocket(io);
 

@@ -1,6 +1,7 @@
 import styles from './ChatList.module.css';
 import { ChatItem } from '../ChatItem/ChatItem';
 import { SearchComponent } from '../SearchComponent/SearchComponent';
+import { Conversation } from '../../services/conversation-service';
 
 const mockConversations: Conversation[] = [
   {
@@ -169,11 +170,13 @@ const mockConversations: Conversation[] = [
 interface ChatListProps {
   onCreateNewClick: () => void;
   isNewChatPending: boolean;
+  onChatClick: (conversation: Conversation) => void;
 }
 
 export function ChatList({
   onCreateNewClick,
   isNewChatPending,
+  onChatClick,
 }: ChatListProps) {
   //TODO: this should be the onSearch function
   function noop(_search: string): void {
@@ -197,7 +200,7 @@ export function ChatList({
       <ul className={styles['chats']}>
         {mockConversations.map((item) => (
           <div key={item.id}>
-            <ChatItem chat={item} />
+            <ChatItem chat={item} onClick={onChatClick} />
           </div>
         ))}
       </ul>
