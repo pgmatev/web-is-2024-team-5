@@ -1,35 +1,24 @@
 .page-wrapper {
-    /* display: grid;
-    grid-template-columns: 2fr 3fr;
-    column-gap: 3px;
-    background-color: var(--dark-purple);
-    grid-template-areas: "chat-list chat-messages";
-    min-height: calc(100% - 68px);
-    max-height: 100%; */
     display: grid;
     grid-template-columns: 2fr 3fr;
     grid-template-areas: "chat-list chat-messages";
     width: 100%;
     height: 100%;
-    /* overflow: hidden; */
+    background-color: var(--bg);
 }
 
 .chatlist-section {
     grid-area: chat-list;
     background-color: var(--bg);
-    /* max-height: 100%; */
-    /* overflow-y: auto; Make each column independently scrollable */
-    height: 90vh;
+    height: 92vh;
     overflow: hidden;
-    /* height: 100%; */
 }
 
 .chat-section {
     grid-area: chat-messages;
     background-color: white;
-    overflow-y: auto; /* Make each column independently scrollable */
-    /* height: 100%; */
-    height: 90vh;
+    overflow-y: auto;
+    height: 92vh;
 }
 
 

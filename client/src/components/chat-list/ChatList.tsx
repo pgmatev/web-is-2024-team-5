@@ -1,6 +1,5 @@
 import styles from './ChatList.module.css';
 import { Chatm, ChatItem } from '../chat-item/ChatItem';
-// import { Link } from 'react-router-dom';
 
 const chats: Chatm[] = [
   {

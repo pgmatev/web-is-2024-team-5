@@ -5,7 +5,7 @@
   border-color: var(--bg);
   border-style: inset;
   background-color: var(--main-col);
-  max-height: 90vh;
+  max-height: 92vh;
 }
 
 .chats-title {
@@ -18,8 +18,9 @@
   background-color: var(--bg);
   border-radius: 8px;
   border-style: inset;
+  border-color: var(--bg);
   list-style-type: none;
-  height: 70vh;
+  height: 76vh;
   overflow-y: scroll;
   scrollbar-color: var(--bg);
   scrollbar-width: thin;
