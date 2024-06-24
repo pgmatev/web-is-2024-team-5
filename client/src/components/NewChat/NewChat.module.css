@@ -1,0 +1,46 @@
+.section-chat {
+  display: flex;
+  flex-direction: column;
+  min-height: calc(100% - 68px);
+  width: 100%;
+  height: 100%;
+}
+
+.new-chat-header {
+  background-color: var(--bg);
+  display: flex;
+  align-items: center;
+  position: relative;
+}
+
+.new-chat-footer {
+  display: flex;
+  align-items: center;
+  flex-grow: 1;
+}
+
+.dropdown-ul {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  max-height: 200px;
+  overflow-y: scroll;
+  border: 1px solid #ccc;
+  background-color: white;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  z-index: 1;
+}
+
+.dropdown-li {
+  padding: 8px;
+  cursor: pointer;
+  z-index: 1;
+  border-bottom: 1px solid var(--main-col);
+}
+
+.dropdown-li:hover {
+  background-color: var(--bg);
+}

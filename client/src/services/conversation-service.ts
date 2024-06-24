@@ -40,6 +40,18 @@ class ConversationService {
     );
     return result;
   }
+
+  async createConversation(participants: string[]) {
+    const result = await this.http.post<Conversation>(`/conversations`, {
+      body: {
+        participants,
+        // TODO: Allow users to chose wether it is a group or private (ALlow groups of 2)
+        type: participants.length > 2 ? 'group' : 'private',
+      },
+    });
+
+    return result;
+  }
 }
 
 export const conversationService = new ConversationService();

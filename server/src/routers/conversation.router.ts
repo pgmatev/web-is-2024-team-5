@@ -2,8 +2,8 @@ import { Router } from 'express';
 import { ConversationService, conversationInputSchema } from '../services';
 import { authMiddleware, requestHandlerMiddleware } from '../middlewares';
 import { BadRequestError, ForbiddenError, NotFoundError } from '../errors';
-import { getUserFromLocals } from '../helpers';
 import { IConversation } from '../models/ConversationModel';
+import { getUserFromRequestContext } from '../helpers';
 
 export const conversationRouter = Router();
 const conversationService = new ConversationService();
@@ -15,9 +15,7 @@ conversationRouter.get(
     const page = parseInt(req.query.page as string) || 1;
     const limit = parseInt(req.query.limit as string) || 10;
 
-    const currentUser = getUserFromLocals(res);
-
-    console.log(currentUser, currentUser.id);
+    const currentUser = getUserFromRequestContext(req);
 
     const conversations =
       await conversationService.getPaginatedConversationsByUserId(
@@ -48,7 +46,7 @@ conversationRouter.post(
   authMiddleware,
   requestHandlerMiddleware(async (req, res) => {
     const { participants, type } = conversationInputSchema.parse(req.body);
-    const currentUser = getUserFromLocals(res);
+    const currentUser = getUserFromRequestContext(req);
 
     if (!participants.includes(currentUser.id)) {
       throw new ForbiddenError('Cannot create a chat with these participants');

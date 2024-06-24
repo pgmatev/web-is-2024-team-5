@@ -34,4 +34,19 @@ export class UserService {
     }
     return undefined;
   }
+
+  async getUsersBySearchParams(search: string) {
+    const users = await User.find({
+      $or: [
+        { firstName: { $regex: search, $options: 'i' } },
+        { lastName: { $regex: search, $options: 'i' } },
+      ],
+    }).exec();
+
+    if (users) {
+      return users.map((user) => user.toObject());
+    }
+
+    return undefined;
+  }
 }

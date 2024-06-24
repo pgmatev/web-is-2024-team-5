@@ -1,13 +1,22 @@
 import styles from './ChatList.module.css';
-import { ChatItem } from '../chat-item/ChatItem';
+import { ChatItem } from '../ChatItem/ChatItem';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useAsyncAction } from '../../hooks/useAsyncAction';
 import {
   Conversation,
   conversationService,
 } from '../../services/conversation-service';
+import { SearchComponent } from '../SearchComponent/SearchComponent';
 
-export function ChatList() {
+interface ChatListProps {
+  onCreateNewClick: () => void;
+  isNewChatPending: boolean;
+}
+
+export function ChatList({
+  onCreateNewClick,
+  isNewChatPending,
+}: ChatListProps) {
   const [items, setItems] = useState<Conversation[]>([]);
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
@@ -42,11 +51,27 @@ export function ChatList() {
 
   useEffect(() => {
     fetchNextPage(page);
-  }, [page]);
+  }, [fetchNextPage, page]);
+
+  //TODO: this should be the onSearch function
+  function noop(_search: string): void {
+    throw new Error('Function not implemented.');
+  }
 
   return (
     <section className={styles['chats-section']}>
-      <h1 className={styles['chats-title']}>Your chats list:</h1>
+      <div className={styles['chats-header']}>
+        <h1 className={styles['chats-title']}>Chats</h1>
+        <div className={styles['chats-search']}>
+          <SearchComponent onSearch={noop} />
+          <button
+            className={styles['new-chat-button']}
+            onClick={onCreateNewClick}
+          >
+            {isNewChatPending ? 'Exit' : 'Create new'}
+          </button>
+        </div>
+      </div>
       <ul className={styles['chats']}>
         {items.map((item, index) => (
           <div

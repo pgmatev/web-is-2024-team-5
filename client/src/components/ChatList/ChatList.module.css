@@ -8,6 +8,29 @@
   max-height: 92vh;
 }
 
+.chats-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.chats-search {
+  display: flex;
+  align-items: center;
+}
+
+.new-chat-button {
+  background: var(--purple-bg);
+  color: var(--dark-purple);
+  border-radius: 8px;
+  border-color: var(--dark-purple);
+  margin: 0px;
+  padding: 0;
+  height: 40px;
+  min-width: 80px;
+}
+
 .chats-title {
   margin: 14px;
   color: var(--bg);

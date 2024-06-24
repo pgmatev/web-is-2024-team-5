@@ -1,0 +1,25 @@
+.search-bar {
+  margin: 10px 20px;
+  position: relative;
+}
+
+.search-input {
+  padding: 10px;
+  padding-right: 40px;
+  width: 300px;
+  border-radius: 25px;
+  border-color: var(--bg);
+}
+
+.ri-search-2-line  /*search icon*/ {
+  position: absolute;
+  top: 8px;
+  right: 16px;
+  color: var(--main-col);
+}
+
+@media only screen and (max-width: 480px) {
+  .search-input {
+    width: 130px;
+  }
+}

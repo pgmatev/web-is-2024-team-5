@@ -1,6 +1,6 @@
 import styles from "./Chat.module.css";
 import { RiSendPlaneFill} from '@remixicon/react';
-import {MessageItem} from "../message-item/MessageItem"
+import {MessageItem} from "../MessageItem/MessageItem"
 
 const chat = {
     converstationId: '1',
