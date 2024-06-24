@@ -55,7 +55,7 @@ const chat = {
             id: "1",
             date: new Date(Date.now()),
             sender: {
-                userId: "1",
+                userId: "2",
                 firstName: "Ivan",
                 lastName: "Ivanov"
             },
@@ -95,7 +95,7 @@ const chat = {
             id: "1",
             date: new Date(Date.now()),
             sender: {
-                userId: "1",
+                userId: "2",
                 firstName: "Ivan",
                 lastName: "Ivanov"
             },
@@ -125,11 +125,11 @@ const chat = {
             id: "1",
             date: new Date(Date.now()),
             sender: {
-                userId: "1",
+                userId: "2",
                 firstName: "Ivan",
                 lastName: "Ivanov"
             },
-            text: "lorem ipsum"
+            text: "lorem ipsum  lorem ipsum lorem ipsum"
         },
         {
             id: "1",
@@ -145,7 +145,7 @@ const chat = {
             id: "1",
             date: new Date(Date.now()),
             sender: {
-                userId: "1",
+                userId: "2",
                 firstName: "Ivan",
                 lastName: "Ivanov"
             },
