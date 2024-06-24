@@ -2,7 +2,7 @@ import { useMemo } from 'react';
 import { Conversation } from '../../services/conversation-service';
 import styles from './ChatItem.module.css';
 
-export interface Chat {
+export interface Chatm {
   chatId: string;
   chatName: string;
   lastMessage: {

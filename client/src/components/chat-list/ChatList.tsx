@@ -45,7 +45,7 @@ export function ChatList() {
   }, [page]);
 
   return (
-    <main className={styles['chats-section']}>
+    <section className={styles['chats-section']}>
       <h1 className={styles['chats-title']}>Your chats list:</h1>
       <ul className={styles['chats']}>
         {items.map((item, index) => (
@@ -58,7 +58,8 @@ export function ChatList() {
         ))}
         {loading && <p>Loading...</p>}
       </ul>
-    </main>
+      {/* <Link to={'/chat'}><p>here to chat</p></Link> */}
+    </section>
   );
 
   // return (

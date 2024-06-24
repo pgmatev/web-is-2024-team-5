@@ -2,7 +2,7 @@ import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
 import { PublicOutlet } from './components/auth/outlets/PublicOutlet';
 import { PrivateOutlet } from './components/auth/outlets/PrivateOutlet';
 import { UserProvider } from './contexts/UserContext';
-import { ChatList } from './components/chat-list/ChatList';
+import { ChatPage } from './components/chat-page/ChatPage';
 import { LoginForm } from './components/auth/LoginForm';
 import { RegisterForm } from './components/auth/RegisterForm';
 import { Header } from './components/header/Header';
@@ -22,7 +22,7 @@ export function App() {
             </Route>
 
             <Route path="/" element={<PrivateOutlet />}>
-              <Route path="/chats" element={<ChatList />} />
+              <Route path="/chats" element={<ChatPage />} />
             </Route>
 
             <Route path="*" element={<Navigate to="/chats" />} />

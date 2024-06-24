@@ -1,0 +1,16 @@
+.error-list * {
+    margin: 0;
+}
+
+.error-list > ul {
+    font-size: .5rem;
+}
+
+.error-list > li {
+    padding: 0;
+}
+
+.error-basic {
+    font-size: 1rem;
+    margin: .5rem;
+}

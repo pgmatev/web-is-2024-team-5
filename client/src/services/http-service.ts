@@ -57,12 +57,16 @@ export class HttpService {
       const body = this.tryToParseAsJson(await response.text());
       const message = body?.message ?? 'Error in HTTP request';
 
-      if (statusCode === 400 && body.fieldErrors && body.formErrors) {
+      if (
+        statusCode === 400 &&
+        body.errors.fieldErrors &&
+        body.errors.formErrors
+      ) {
         throw new InputError(
           statusCode,
           message,
-          body.formErrors,
-          body.fieldErrors,
+          body.errors.formErrors,
+          body.errors.fieldErrors,
         );
       }
 

@@ -1,0 +1,25 @@
+
+.sent div span {
+    color: var(--main-col);
+}
+
+.sent {
+    text-align: right;
+    align-self: flex-end;
+    background-color: var(--bg);    
+}
+
+.received {
+    text-align: left;
+    align-self: flex-start;
+    background-color: var(--purple-bg);
+}
+
+.received div span {
+    color: var(--dark-purple);
+    
+}
+
+.sent span, .received span {
+    padding: 8px;
+}
