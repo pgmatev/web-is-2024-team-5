@@ -1,12 +1,13 @@
 import mongoose, { Schema } from 'mongoose';
 import { BaseSchema, IBase } from './BaseModel';
+import { string } from 'zod';
 
 export interface IConversation extends IBase {
   type: 'group' | 'private';
   participants: mongoose.Types.ObjectId[];
   messages: mongoose.Types.ObjectId[];
   groupInfo?: {
-    name: string;
+    name?: string;
     adminId: mongoose.Types.ObjectId;
   };
   lastMessage?: {
@@ -38,12 +39,14 @@ const ConversationSchema: Schema<IConversation> = new Schema<IConversation>({
     },
   ],
   groupInfo: {
-    name: String,
+    name: {
+      type: String,
+      required: false,
+    },
     adminId: {
       type: Schema.Types.ObjectId,
       ref: 'User',
     },
-    required: false,
   },
   lastMessage: {
     date: Date,
@@ -52,11 +55,19 @@ const ConversationSchema: Schema<IConversation> = new Schema<IConversation>({
       ref: 'User',
     },
     text: String,
-    required: false,
   },
 });
 
 ConversationSchema.add(BaseSchema);
+
+ConversationSchema.set('toObject', {
+  transform: (doc, ret, options) => {
+    ret.id = ret._id.toString();
+    delete ret._id;
+    delete ret.__v;
+    return ret;
+  },
+});
 
 export const Conversation = mongoose.model<IConversation>(
   'Conversation',

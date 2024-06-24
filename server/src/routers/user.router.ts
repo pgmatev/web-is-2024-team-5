@@ -21,3 +21,15 @@ userRouter.get(
     res.send(user);
   }),
 );
+
+userRouter.get(
+  '/',
+  authMiddleware,
+  requestHandlerMiddleware(async (req, res) => {
+    const search = req.query['search'] as string;
+
+    const users = await userService.getUsersBySearchParams(search);
+
+    res.send(users);
+  }),
+);

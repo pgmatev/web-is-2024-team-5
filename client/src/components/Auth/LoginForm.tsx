@@ -3,7 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { authService } from '../../services/auth-service';
 import { useAsyncAction } from '../../hooks/useAsyncAction';
 import styles from './LoginForm.module.css';
-import {ErrorComponent} from '../error/ErrorComponent.tsx';
+import { ErrorComponent } from '../Error/ErrorComponent.tsx';
 
 export function LoginForm() {
   const [email, setEmail] = useState<string>('');

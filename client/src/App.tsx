@@ -1,11 +1,11 @@
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
-import { PublicOutlet } from './components/auth/outlets/PublicOutlet';
-import { PrivateOutlet } from './components/auth/outlets/PrivateOutlet';
 import { UserProvider } from './contexts/UserContext';
-import { ChatPage } from './components/chat-page/ChatPage';
-import { LoginForm } from './components/auth/LoginForm';
-import { RegisterForm } from './components/auth/RegisterForm';
-import { Header } from './components/header/Header';
+import { ChatPage } from './components/ChatPage/ChatPage';
+import { Header } from './components/Header/Header';
+import { LoginForm } from './components/Auth/LoginForm';
+import { RegisterForm } from './components/Auth/RegisterForm';
+import { PrivateOutlet } from './components/Auth/outlets/PrivateOutlet';
+import { PublicOutlet } from './components/Auth/outlets/PublicOutlet';
 
 export function App() {
   return (
