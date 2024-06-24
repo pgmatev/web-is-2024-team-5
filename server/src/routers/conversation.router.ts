@@ -1,5 +1,9 @@
 import { Router } from 'express';
-import { ConversationService, conversationInputSchema } from '../services';
+import {
+  ConversationService,
+  conversationInputSchema,
+  UserService,
+} from '../services';
 import { authMiddleware, requestHandlerMiddleware } from '../middlewares';
 import { BadRequestError, ForbiddenError, NotFoundError } from '../errors';
 import { IConversation } from '../models/ConversationModel';
@@ -7,6 +11,7 @@ import { getUserFromRequestContext } from '../helpers';
 
 export const conversationRouter = Router();
 const conversationService = new ConversationService();
+const userService = new UserService();
 
 conversationRouter.get(
   '/',
@@ -36,6 +41,43 @@ conversationRouter.get(
       limit,
       totalPages: Math.ceil(totalConversations / limit),
       totalConversations,
+      conversations,
+    });
+  }),
+);
+
+conversationRouter.get(
+  '/:id/all',
+  authMiddleware,
+  requestHandlerMiddleware(async (req, res) => {
+    const currentUser = getUserFromRequestContext(req);
+    const endpointId = req.params.id;
+    if (currentUser.id !== endpointId) {
+      throw new ForbiddenError("Cannot access this user's conversations.");
+    }
+
+    const groupName = (req.query.groupName as string) || '';
+    const participantName = (req.query.participantName as string) || '';
+    const userIdsMatchingParticipantName: string[] = [];
+
+    if (participantName) {
+      const users = await userService.getUsersBySearchParams(participantName);
+      if (users) {
+        userIdsMatchingParticipantName.push(...users.map((user) => user.id));
+      }
+    }
+
+    const conversations = await conversationService.getAllConversationsByFilter(
+      groupName,
+      userIdsMatchingParticipantName,
+      currentUser.id,
+    );
+
+    if (!conversations) {
+      throw new NotFoundError('No conversations were found');
+    }
+
+    res.json({
       conversations,
     });
   }),

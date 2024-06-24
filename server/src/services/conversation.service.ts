@@ -39,6 +39,30 @@ export class ConversationService {
     return undefined;
   }
 
+  async getAllConversationsByFilter(
+    groupName: string,
+    userIdsMatchingParticipantName: string[],
+    userId: string,
+  ) {
+    const query: any = {
+      $and: [{ participants: { $all: [userId] } }],
+    };
+    if (groupName) {
+      query.$and.push({ groupName: groupName });
+    }
+    if (userIdsMatchingParticipantName.length) {
+      query.$and.push({
+        participants: { $all: userIdsMatchingParticipantName },
+      });
+    }
+    const conversations = await Conversation.find(query);
+
+    if (conversations) {
+      return conversations.map((conversation) => conversation.toObject());
+    }
+    return undefined;
+  }
+
   async getTotalConversations() {
     return await Conversation.countDocuments().exec();
   }
