@@ -90,13 +90,73 @@ const chat = {
                 lastName: "Ivanov"
             },
             text: "lorem ipsum"
+        },
+        {
+            id: "1",
+            date: new Date(Date.now()),
+            sender: {
+                userId: "1",
+                firstName: "Ivan",
+                lastName: "Ivanov"
+            },
+            text: "lorem ipsum"
+        },
+        {
+            id: "1",
+            date: new Date(Date.now()),
+            sender: {
+                userId: "1",
+                firstName: "Ivan",
+                lastName: "Ivanov"
+            },
+            text: "lorem ipsum"
+        },
+        {
+            id: "1",
+            date: new Date(Date.now()),
+            sender: {
+                userId: "1",
+                firstName: "Ivan",
+                lastName: "Ivanov"
+            },
+            text: "lorem ipsum"
+        },
+        {
+            id: "1",
+            date: new Date(Date.now()),
+            sender: {
+                userId: "1",
+                firstName: "Ivan",
+                lastName: "Ivanov"
+            },
+            text: "lorem ipsum"
+        },
+        {
+            id: "1",
+            date: new Date(Date.now()),
+            sender: {
+                userId: "1",
+                firstName: "Ivan",
+                lastName: "Ivanov"
+            },
+            text: "lorem ipsum"
+        },
+        {
+            id: "1",
+            date: new Date(Date.now()),
+            sender: {
+                userId: "1",
+                firstName: "Ivan",
+                lastName: "Ivanov"
+            },
+            text: "lorem ipsum"
         }
     ]
 }
 
 export function Chat() {
     return (
-        <main className={styles["main"]}>
+        <section className={styles["section-chat"]}>
             <div className={styles["chat"]}>
                 <ul className={styles["messages"]}>
                     {chat.messages.map((message) => <MessageItem message={message} />)}
@@ -110,6 +170,6 @@ export function Chat() {
                     </button>
                 </form>
             </section>
-        </main>
+        </section>
     );
   }

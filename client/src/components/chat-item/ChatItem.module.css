@@ -1,6 +1,6 @@
 .chat-item {
-  margin: 14px;
-  padding: 14px;
+  margin: 8px;
+  padding: 8px;
   border-radius: 12px;
   display: flex;
   flex-direction: row;
@@ -15,6 +15,7 @@
 .chat-item div {
   display: flex;
   flex-direction: column;
+  padding-right: 12px;
 }
 
 .contact-name {
@@ -34,4 +35,5 @@
   font-size: 16px;
   display: flex;
   align-items: center;
+  max-width: 60px;
 }

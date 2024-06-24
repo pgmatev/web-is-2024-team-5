@@ -1,26 +1,25 @@
 .chats-section {
-  padding: 30px;
-  margin: 20px;
+  padding: 12px;
+  margin: 6px;
   border-radius: 16px;
   border-color: var(--bg);
   border-style: inset;
   background-color: var(--main-col);
-  height: 70%;
+  max-height: 90vh;
 }
 
 .chats-title {
-  font-size: 30px;
   margin: 14px;
   color: var(--bg);
   font-weight: 500;
 }
 .chats {
-  padding: 16px;
+  padding: 4px;
   background-color: var(--bg);
   border-radius: 8px;
   border-style: inset;
   list-style-type: none;
-  height: 70%;
+  height: 70vh;
   overflow-y: scroll;
   scrollbar-color: var(--bg);
   scrollbar-width: thin;
