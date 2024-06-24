@@ -11,8 +11,8 @@ export function SearchComponent({ onSearch }: SearchComponentProps) {
 
   useEffect(() => {
     const delayDebounceFn = setTimeout(() => {
-        onSearch(searchTerm);
-    }, 1000);
+      onSearch(searchTerm);
+    }, 300);
 
     return () => clearTimeout(delayDebounceFn);
   }, [onSearch, searchTerm]);

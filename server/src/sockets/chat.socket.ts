@@ -120,22 +120,22 @@ const handleDirectMessage = async (
       }),
     );
 
-  if (msg.to === user.id) {
-    return;
-  }
-
-  // Check if recipient is online
-  if (!recipient.isOnline) {
-    console.log(`User ${msg.to} is offline.`);
-    return;
-  }
+  // if (msg.to === user.id) {
+  //   return;
+  // }
+  //
+  // // Check if recipient is online
+  // if (!recipient.isOnline) {
+  //   console.log(`User ${msg.to} is offline.`);
+  //   return;
+  // }
 
   // Send message to the recipient
-  io.to(`user:${msg.to}`).emit('chatMessage', {
-    from: user.id,
-    source: user.id,
-    message: msg.message,
-  });
+  // io.to(`user:${msg.to}`).emit('chatMessage', {
+  //   from: user.id,
+  //   source: user.id,
+  //   message: msg.message,
+  // });
 };
 
 const onlyForHandshake = (

@@ -11,11 +11,13 @@ import { SearchComponent } from '../SearchComponent/SearchComponent';
 interface ChatListProps {
   onCreateNewClick: () => void;
   isNewChatPending: boolean;
+  onChatClick: (conversation: Conversation) => void;
 }
 
 export function ChatList({
   onCreateNewClick,
   isNewChatPending,
+  onChatClick,
 }: ChatListProps) {
   const [items, setItems] = useState<Conversation[]>([]);
   const [page, setPage] = useState(1);
@@ -78,7 +80,7 @@ export function ChatList({
             ref={items.length === index + 1 ? lastItemRef : null}
             key={item.id}
           >
-            <ChatItem chat={item} />
+            <ChatItem key={item.id} chat={item} onClick={onChatClick} />
           </div>
         ))}
         {loading && <p>Loading...</p>}

@@ -3,12 +3,24 @@ import { ChatList } from '../ChatList/ChatList';
 import { Chat } from '../Chat/Chat';
 import { useCallback, useState } from 'react';
 import { NewChat } from '../NewChat/NewChat';
+import { WelcomeChatWindow } from '../WelcomeChatWindow/WelcomeChatWindow.tsx';
+import { Conversation } from '../../services/conversation-service.ts';
 
 export function ChatPage() {
   const [isNewChatPending, setIsNewChatPending] = useState(false);
   const onCreateNewClick = useCallback(() => {
     setIsNewChatPending(!isNewChatPending);
+    setSelectedConversation(undefined);
   }, [isNewChatPending]);
+
+  const [selectedConversation, setSelectedConversation] = useState<
+    Conversation | undefined
+  >(undefined);
+
+  const onChatClick = useCallback((conversation: Conversation) => {
+    setSelectedConversation(conversation);
+    setIsNewChatPending(false);
+  }, []);
 
   const onCreateSuccessful = useCallback((conversationId: string) => {
     setIsNewChatPending(false);
@@ -22,14 +34,15 @@ export function ChatPage() {
         <ChatList
           onCreateNewClick={onCreateNewClick}
           isNewChatPending={isNewChatPending}
+          onChatClick={onChatClick}
         />
       </section>
       <section className={styles['chat-section']}>
-        {isNewChatPending ? (
+        {!selectedConversation && !isNewChatPending && <WelcomeChatWindow />}
+        {isNewChatPending && (
           <NewChat onCreateSuccessful={onCreateSuccessful} />
-        ) : (
-          <Chat />
         )}
+        {selectedConversation && <Chat conversation={selectedConversation} />}
       </section>
     </main>
   );
