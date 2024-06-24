@@ -1,7 +1,7 @@
 import styles from './ChatPage.module.css';
 import { ChatList } from '../ChatList/ChatList';
 import { Chat } from '../Chat/Chat';
-import { useCallback, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { NewChat } from '../NewChat/NewChat';
 import { WelcomeChatWindow } from '../WelcomeChatWindow/WelcomeChatWindow.tsx';
 import { Conversation } from '../../services/conversation-service.ts';
@@ -13,10 +13,8 @@ export function ChatPage() {
     setSelectedConversation(undefined);
   }, [isNewChatPending]);
 
-  const [selectedConversation, setSelectedConversation] = useState<
-    Conversation | undefined
-  >(undefined);
-
+  const [selectedConversation, setSelectedConversation] =
+    useState<Conversation>();
   const onChatClick = useCallback((conversation: Conversation) => {
     setSelectedConversation(conversation);
     setIsNewChatPending(false);
@@ -28,6 +26,14 @@ export function ChatPage() {
     console.log(conversationId);
   }, []);
 
+  const render = useMemo(() => {
+    if (isNewChatPending)
+      return <NewChat onCreateSuccessful={onCreateSuccessful} />;
+    if (selectedConversation)
+      return <Chat conversation={selectedConversation} />;
+    return <WelcomeChatWindow />;
+  }, [isNewChatPending, onCreateSuccessful, selectedConversation]);
+
   return (
     <main className={styles['page-wrapper']}>
       <section className={styles['chatlist-section']}>
@@ -37,13 +43,7 @@ export function ChatPage() {
           onChatClick={onChatClick}
         />
       </section>
-      <section className={styles['chat-section']}>
-        {!selectedConversation && !isNewChatPending && <WelcomeChatWindow />}
-        {isNewChatPending && (
-          <NewChat onCreateSuccessful={onCreateSuccessful} />
-        )}
-        {selectedConversation && <Chat conversation={selectedConversation} />}
-      </section>
+      <section className={styles['chat-section']}>{render}</section>
     </main>
   );
 }
