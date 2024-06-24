@@ -47,15 +47,10 @@ conversationRouter.get(
 );
 
 conversationRouter.get(
-  '/:id/all',
+  '/all',
   authMiddleware,
   requestHandlerMiddleware(async (req, res) => {
     const currentUser = getUserFromRequestContext(req);
-    const endpointId = req.params.id;
-    if (currentUser.id !== endpointId) {
-      throw new ForbiddenError("Cannot access this user's conversations.");
-    }
-
     const groupName = (req.query.groupName as string) || '';
     const participantName = (req.query.participantName as string) || '';
     const userIdsMatchingParticipantName: string[] = [];
