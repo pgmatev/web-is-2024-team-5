@@ -1,12 +1,170 @@
 import styles from './ChatList.module.css';
 import { ChatItem } from '../ChatItem/ChatItem';
-import { useCallback, useEffect, useRef, useState } from 'react';
-import { useAsyncAction } from '../../hooks/useAsyncAction';
-import {
-  Conversation,
-  conversationService,
-} from '../../services/conversation-service';
 import { SearchComponent } from '../SearchComponent/SearchComponent';
+
+const mockConversations: Conversation[] = [
+  {
+    id: 'conv1',
+    participants: ['user1', 'user2'],
+    messages: [
+      {
+        id: 'msg1',
+        text: 'Hello, how are you?',
+        sender: 'user1',
+        createdAt: '2023-01-01T10:00:00Z',
+      },
+      {
+        id: 'msg2',
+        text: 'I am good, thanks!',
+        sender: 'user2',
+        createdAt: '2023-01-01T10:05:00Z',
+      },
+      {
+        id: 'msg3',
+        text: 'What about you?',
+        sender: 'user2',
+        createdAt: '2023-01-01T10:06:00Z',
+      },
+    ],
+    lastMessage: {
+      id: 'msg3',
+      text: 'What about you?',
+      sender: 'user2',
+      createdAt: '2023-01-01T10:06:00Z',
+    },
+    type: 'private',
+  },
+  {
+    id: 'conv2',
+    participants: ['user3', 'user4', 'user5'],
+    messages: [
+      {
+        id: 'msg4',
+        text: 'Hi team, our next meeting is on Monday.',
+        sender: 'user3',
+        createdAt: '2023-01-02T09:00:00Z',
+      },
+      {
+        id: 'msg5',
+        text: 'Got it, thanks!',
+        sender: 'user4',
+        createdAt: '2023-01-02T09:10:00Z',
+      },
+      {
+        id: 'msg6',
+        text: 'See you all then.',
+        sender: 'user5',
+        createdAt: '2023-01-02T09:15:00Z',
+      },
+    ],
+    lastMessage: {
+      id: 'msg6',
+      text: 'See you all then.',
+      sender: 'user5',
+      createdAt: '2023-01-02T09:15:00Z',
+    },
+    groupInfo: {
+      groupName: 'Project Team',
+      admin: 'user3',
+    },
+    type: 'group',
+  },
+  {
+    id: 'grouup1',
+    participants: ['user3', 'user4', 'user5'],
+    messages: [
+      {
+        id: 'msg4',
+        text: 'Hi team, our next meeting is on Monday.',
+        sender: 'user3',
+        createdAt: '2023-01-02T09:00:00Z',
+      },
+      {
+        id: 'msg5',
+        text: 'Got it, thanks!',
+        sender: 'user4',
+        createdAt: '2023-01-02T09:10:00Z',
+      },
+      {
+        id: 'msg6',
+        text: 'See you all then.',
+        sender: 'user5',
+        createdAt: '2023-01-02T09:15:00Z',
+      },
+    ],
+    lastMessage: {
+      id: 'msg6',
+      text: 'See you all then.',
+      sender: 'user5',
+      createdAt: '2023-01-02T09:15:00Z',
+    },
+    groupInfo: {
+      groupName: 'Project Team 1',
+      admin: 'user3',
+    },
+    type: 'group',
+  },
+  {
+    id: 'group2',
+    participants: ['user3', 'user4', 'user5'],
+    messages: [
+      {
+        id: 'msg4',
+        text: 'Hi team, our next meeting is on Monday.',
+        sender: 'user3',
+        createdAt: '2023-01-02T09:00:00Z',
+      },
+      {
+        id: 'msg5',
+        text: 'Got it, thanks!',
+        sender: 'user4',
+        createdAt: '2023-01-02T09:10:00Z',
+      },
+      {
+        id: 'msg6',
+        text: 'See you all then.',
+        sender: 'user5',
+        createdAt: '2023-01-02T09:15:00Z',
+      },
+    ],
+    lastMessage: {
+      id: 'msg6',
+      text: 'See you all then.',
+      sender: 'user5',
+      createdAt: '2023-01-02T09:15:00Z',
+    },
+    groupInfo: {
+      groupName: 'Project Team 2',
+      admin: 'user3',
+    },
+    type: 'group',
+  },
+  {
+    id: 'conv3',
+    participants: ['user6', 'user7'],
+    messages: [
+      {
+        id: 'msg7',
+        text: 'Are you coming to the party tonight?',
+        sender: 'user6',
+        createdAt: '2023-01-03T18:00:00Z',
+      },
+      {
+        id: 'msg8',
+        text: 'Yes, I will be there!',
+        sender: 'user7',
+        createdAt: '2023-01-03T18:10:00Z',
+      },
+    ],
+    lastMessage: {
+      id: 'msg8',
+      text: 'Yes, I will be there!',
+      sender: 'user7',
+      createdAt: '2023-01-03T18:10:00Z',
+    },
+    type: 'private',
+  },
+];
 
 interface ChatListProps {
   onCreateNewClick: () => void;
@@ -17,42 +175,6 @@ export function ChatList({
   onCreateNewClick,
   isNewChatPending,
 }: ChatListProps) {
-  const [items, setItems] = useState<Conversation[]>([]);
-  const [page, setPage] = useState(1);
-  const [hasMore, setHasMore] = useState(true);
-
-  const observer = useRef<IntersectionObserver | null>(null);
-
-  const { trigger: fetchNextPage, loading } = useAsyncAction(
-    async (page: number) => {
-      const newConversations =
-        await conversationService.getPaginatedConversations(page);
-      newConversations.conversations.filter(
-        (conversation) => !items.find((item) => item.id === conversation.id),
-      );
-      setItems((items) => [...items, ...newConversations.conversations]);
-      setHasMore(newConversations.conversations.length > 0);
-    },
-  );
-
-  const lastItemRef = useCallback(
-    (node: HTMLDivElement | null) => {
-      if (loading) return;
-      if (observer.current) observer.current.disconnect();
-      observer.current = new IntersectionObserver((entries) => {
-        if (entries[0].isIntersecting && hasMore) {
-          setPage((prevPage) => prevPage + 1);
-        }
-      });
-      if (node) observer.current.observe(node);
-    },
-    [loading, hasMore],
-  );
-
-  useEffect(() => {
-    fetchNextPage(page);
-  }, [fetchNextPage, page]);
-
   //TODO: this should be the onSearch function
   function noop(_search: string): void {
     throw new Error('Function not implemented.');
@@ -73,17 +195,12 @@ export function ChatList({
         </div>
       </div>
       <ul className={styles['chats']}>
-        {items.map((item, index) => (
-          <div
-            ref={items.length === index + 1 ? lastItemRef : null}
-            key={item.id}
-          >
+        {mockConversations.map((item) => (
+          <div key={item.id}>
             <ChatItem chat={item} />
           </div>
         ))}
-        {loading && <p>Loading...</p>}
       </ul>
-      {/* <Link to={'/chat'}><p>here to chat</p></Link> */}
     </section>
   );
 
