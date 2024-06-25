@@ -44,6 +44,27 @@ conversationRouter.get(
   }),
 );
 
+conversationRouter.get(
+  '/all',
+  authMiddleware,
+  requestHandlerMiddleware(async (req, res) => {
+    const currentUser = getUserFromRequestContext(req);
+    const search = req.query['search'] as string;
+
+    const conversations =
+      await conversationService.getAllConversationsBySearchParam(
+        currentUser.id,
+        search,
+      );
+
+    if (!conversations) {
+      throw new NotFoundError('No conversations were found');
+    }
+
+    res.send(conversations);
+  }),
+);
+
 conversationRouter.post(
   '/',
   authMiddleware,

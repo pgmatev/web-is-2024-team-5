@@ -19,7 +19,6 @@ export function NewChat({ onCreateSuccessful }: NewChatProps) {
   const [showDropdown, setShowDropDown] = useState(false);
 
   const { trigger: searchUsers } = useAsyncAction(async (search: string) => {
-    console.log(search);
     if (search) {
       const responseUsers = await userService.getUsersBySearchParam(search);
       setShowDropDown(true);

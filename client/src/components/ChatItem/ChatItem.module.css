@@ -34,12 +34,23 @@
   color: var(--main-col);
   font-weight: 600;
   margin: 4px 0;
+  display: flex;
+  align-items: center;
+  gap: 2px;
 }
 
 .selected-contact-name {
   color: #afc38f;
   font-weight: 600;
   margin: 4px 0;
+  display: flex;
+  align-items: center;
+  gap: 2px;
+}
+
+.chat-metadata {
+  display: flex;
+  flex-direction: column;
 }
 
 .contact-message {
