@@ -41,6 +41,7 @@ export function ChatPage() {
           onCreateNewClick={onCreateNewClick}
           isNewChatPending={isNewChatPending}
           onChatClick={onChatClick}
+          selectedConversation={selectedConversation}
         />
       </section>
       <section className={styles['chat-section']}>{render}</section>

@@ -8,11 +8,23 @@
   cursor: pointer;
 }
 
-.chat-item:hover{
+.selected-chat-item {
+  margin: 8px;
+  padding: 8px;
+  border-radius: 12px;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  cursor: pointer;
+  background-color: var(--main-col);
+}
+
+.chat-item:hover {
   background-color: #afc38f;
 }
 
-.chat-item div {
+.chat-item,
+.selected-chat-item div {
   display: flex;
   flex-direction: column;
   padding-right: 12px;
@@ -20,6 +32,12 @@
 
 .contact-name {
   color: var(--main-col);
+  font-weight: 600;
+  margin: 4px 0;
+}
+
+.selected-contact-name {
+  color: #afc38f;
   font-weight: 600;
   margin: 4px 0;
 }

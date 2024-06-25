@@ -171,12 +171,14 @@ interface ChatListProps {
   onCreateNewClick: () => void;
   isNewChatPending: boolean;
   onChatClick: (conversation: Conversation) => void;
+  selectedConversation: Conversation | undefined;
 }
 
 export function ChatList({
   onCreateNewClick,
   isNewChatPending,
   onChatClick,
+  selectedConversation,
 }: ChatListProps) {
   //TODO: this should be the onSearch function
   function noop(_search: string): void {
@@ -200,21 +202,14 @@ export function ChatList({
       <ul className={styles['chats']}>
         {mockConversations.map((item) => (
           <div key={item.id}>
-            <ChatItem chat={item} onClick={onChatClick} />
+            <ChatItem
+              chat={item}
+              onClick={onChatClick}
+              isChatItemSelected={selectedConversation?.id === item.id}
+            />
           </div>
         ))}
       </ul>
     </section>
   );
-
-  // return (
-  //   <main className={styles['chats-section']}>
-  //     <h1 className={styles['chats-title']}>Your chats list:</h1>
-  //     <ul className={styles['chats']}>
-  //       {chats.length > 0
-  //         ? chats.map((chat) => <ChatItem chat={chat} />)
-  //         : `You don't have chats yet.`}
-  //     </ul>
-  //   </main>
-  // );
 }

@@ -15,9 +15,10 @@ export interface Chatm {
 export interface ChatItemProps {
   chat: Conversation;
   onClick: (conversation: Conversation) => void;
+  isChatItemSelected: boolean;
 }
 
-export function ChatItem({ chat, onClick }: ChatItemProps) {
+export function ChatItem({ chat, onClick, isChatItemSelected }: ChatItemProps) {
   //TODO: fetch users' names when there is no groupname
   // const userList = useMemo(() =>{
   //   return
@@ -30,9 +31,21 @@ export function ChatItem({ chat, onClick }: ChatItemProps) {
   }, [chat]);
 
   return (
-    <li data-channel-id={chat.id} onClick={() => onClick(chat)}>
+    <li
+      className={
+        styles[isChatItemSelected ? 'selected-chat-item' : 'chat-item']
+      }
+      data-channel-id={chat.id}
+      onClick={() => onClick(chat)}
+    >
       <div>
-        <span className={styles['contact-name']}>
+        <span
+          className={
+            styles[
+              isChatItemSelected ? 'selected-contact-name' : 'contact-name'
+            ]
+          }
+        >
           {chat.groupInfo?.groupName ?? chat.id}
         </span>
         <span className={styles['contact-message']}>
