@@ -1,5 +1,5 @@
 import styles from './Chat.module.css';
-import { RiSendPlaneFill } from '@remixicon/react';
+import { RiChatSettingsFill, RiSendPlaneFill } from '@remixicon/react';
 import { MessageItem } from '../MessageItem/MessageItem';
 import { Conversation } from '../../services/conversation-service.ts';
 
@@ -173,6 +173,7 @@ export function Chat({ conversation }: ChatProps) {
       </div>
       <section className={styles['send-message-section']}>
         <form className={styles['messages-form']}>
+          <RiChatSettingsFill className={styles["ri-chat-settings-fill"]}></RiChatSettingsFill>
           <input
             className={styles['message-input']}
             type="text"

@@ -52,6 +52,13 @@
     display: flex;
     flex-direction: row;
     justify-content: space-between;
+    align-items: center;
+}
+
+.ri-chat-settings-fill {
+    color: var(--main-col);
+    margin: 14px;
+    font-size: 30px;
 }
 
 .message-input {
@@ -59,7 +66,7 @@
     padding: 8px;
     border-radius: 18px;
     border-color: var(--main-col);
-    width: 90%;
+    width: 80%;
 }
 
 .message-btn {
