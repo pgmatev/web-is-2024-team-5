@@ -8,6 +8,7 @@ import {
 import { authMiddleware, requestHandlerMiddleware } from '../middlewares';
 import { BadRequestError, ForbiddenError, NotFoundError } from '../errors';
 import { getUserFromRequestContext } from '../helpers';
+import { IConversation } from '../models/ConversationModel';
 
 export const conversationRouter = Router();
 const conversationService = new ConversationService();
@@ -52,30 +53,28 @@ conversationRouter.get(
   authMiddleware,
   requestHandlerMiddleware(async (req, res) => {
     const currentUser = getUserFromRequestContext(req);
-    const groupName = (req.query.groupName as string) || '';
-    const participantName = (req.query.participantName as string) || '';
+    const search = req.query['search'] as string;
     const userIdsMatchingParticipantName: string[] = [];
 
-    if (participantName) {
-      const users = await userService.getUsersBySearchParams(participantName);
-      if (users) {
-        userIdsMatchingParticipantName.push(...users.map((user) => user.id));
-      }
-    }
+    let conversations: IConversation[] | undefined;
 
-    const conversations = await conversationService.getAllConversationsByFilter(
-      groupName,
-      userIdsMatchingParticipantName,
-      currentUser.id,
-    );
+    if (!search) {
+      conversations = await conversationService.getAllConversationsByUserId(
+        currentUser.id,
+      );
+    } else {
+      conversations =
+        await conversationService.getAllConversationsBySearchParam(
+          search,
+          currentUser.id,
+        );
+    }
 
     if (!conversations) {
       throw new NotFoundError('No conversations were found');
     }
 
-    res.json({
-      conversations,
-    });
+    res.send(conversations);
   }),
 );
 

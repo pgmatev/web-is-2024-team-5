@@ -1,5 +1,6 @@
 import { z } from 'zod';
 import { User } from '../models/UserModel';
+import { generateRegexTermsFromSearch } from '../helpers';
 
 export const CreateUserSchema = z.object({
   email: z.string().email({ message: 'Please enter a valid email format.' }),
@@ -36,26 +37,14 @@ export class UserService {
   }
 
   async getUsersBySearchParams(search: string) {
-    const terms = search
-      .split(' ')
-      .map((term) => term.trim())
-      .filter((term) => term.length > 0);
-
-    if (terms.length === 0) {
-      return [];
-    }
-
-    const regexTerms = terms.map((term) => new RegExp(term, 'i'));
+    const terms = generateRegexTermsFromSearch(search);
 
     const searchConditions = [
-      { firstName: { $in: regexTerms } },
-      { lastName: { $in: regexTerms } },
+      { firstName: { $in: terms } },
+      { lastName: { $in: terms } },
       {
         $or: terms.map((term) => ({
-          $or: [
-            { firstName: new RegExp(term, 'i') },
-            { lastName: new RegExp(term, 'i') },
-          ],
+          $or: [{ firstName: term }, { lastName: term }],
         })),
       },
     ];
