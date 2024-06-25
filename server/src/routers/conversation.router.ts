@@ -1,15 +1,19 @@
 import { Router } from 'express';
 import {
   ConversationService,
+  UserService,
   conversationInputSchema,
-  messageService,
+  MessageService,
 } from '../services';
 import { authMiddleware, requestHandlerMiddleware } from '../middlewares';
 import { BadRequestError, ForbiddenError, NotFoundError } from '../errors';
 import { getUserFromRequestContext } from '../helpers';
+import { IConversation } from '../models/ConversationModel';
 
 export const conversationRouter = Router();
 const conversationService = new ConversationService();
+const userService = new UserService();
+const messageService = new MessageService();
 
 conversationRouter.get(
   '/',
@@ -41,6 +45,36 @@ conversationRouter.get(
       totalConversations,
       conversations,
     });
+  }),
+);
+
+conversationRouter.get(
+  '/all',
+  authMiddleware,
+  requestHandlerMiddleware(async (req, res) => {
+    const currentUser = getUserFromRequestContext(req);
+    const search = req.query['search'] as string;
+    const userIdsMatchingParticipantName: string[] = [];
+
+    let conversations: IConversation[] | undefined;
+
+    if (!search) {
+      conversations = await conversationService.getAllConversationsByUserId(
+        currentUser.id,
+      );
+    } else {
+      conversations =
+        await conversationService.getAllConversationsBySearchParam(
+          search,
+          currentUser.id,
+        );
+    }
+
+    if (!conversations) {
+      throw new NotFoundError('No conversations were found');
+    }
+
+    res.send(conversations);
   }),
 );
 

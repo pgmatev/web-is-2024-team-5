@@ -13,5 +13,3 @@ export class MessageService {
     return [];
   }
 }
-
-export const messageService = new MessageService();

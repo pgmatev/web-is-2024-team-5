@@ -1,5 +1,7 @@
 import { z } from 'zod';
 import { Conversation, IConversation } from '../models/ConversationModel';
+import { generateRegexTermsFromSearch } from '../helpers';
+import mongoose from 'mongoose';
 
 export const conversationInputSchema = z.object({
   type: z.enum(['group', 'private']),
@@ -38,6 +40,87 @@ export class ConversationService {
     }
 
     return undefined;
+  }
+
+  async getAllConversationsByUserId(userId: string) {
+    const conversations = await Conversation.find({
+      participants: userId,
+    })
+      .select('-messages')
+      .sort({ updatedAt: -1 })
+      .exec();
+
+    if (!conversations) {
+      return undefined;
+    }
+
+    return conversations.map((conversation) => conversation.toObject());
+  }
+
+  async getAllConversationsBySearchParam(
+    search: string,
+    currentUserId: string,
+  ) {
+    const terms = generateRegexTermsFromSearch(search);
+
+    const termConditions = [
+      { 'participants.firstName': { $in: terms } },
+      { 'participants.lastName': { $in: terms } },
+      { 'groupInfo.name': { $in: terms } },
+    ];
+
+    try {
+      const conversations = await Conversation.aggregate([
+        {
+          $match: {
+            $and: [
+              { participants: new mongoose.Types.ObjectId(currentUserId) },
+            ],
+          },
+        },
+        {
+          $lookup: {
+            from: 'users',
+            localField: 'participants',
+            foreignField: '_id',
+            as: 'participants',
+          },
+        },
+        {
+          $match: {
+            $or: termConditions,
+          },
+        },
+        {
+          $project: {
+            'participants.password': 0,
+            // 'participants._id': 0, couldn't find a way to rename it
+            messages: 0,
+          },
+        },
+        {
+          $unwind: '$participants',
+        },
+
+        {
+          $group: {
+            _id: '$_id',
+            type: { $first: '$type' },
+            participants: { $push: '$participants' },
+            messages: { $first: '$messages' },
+            groupInfo: { $first: '$groupInfo' },
+            lastMessage: { $first: '$lastMessage' },
+          },
+        },
+      ])
+        .sort({ updatedAt: -1 })
+        .exec();
+
+      return conversations;
+    } catch (err) {
+      console.error(err);
+      throw err;
+    }
   }
 
   async getTotalConversations() {
