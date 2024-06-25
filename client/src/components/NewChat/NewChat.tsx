@@ -19,9 +19,9 @@ export function NewChat({ onCreateSuccessful }: NewChatProps) {
   const [showDropdown, setShowDropDown] = useState(false);
 
   const { trigger: searchUsers } = useAsyncAction(async (search: string) => {
+    console.log(search);
     if (search) {
       const responseUsers = await userService.getUsersBySearchParam(search);
-      console.log(responseUsers, '---');
       setShowDropDown(true);
       return setUsers(
         responseUsers.filter((user) => user.id !== currentUser?.id),
@@ -62,7 +62,7 @@ export function NewChat({ onCreateSuccessful }: NewChatProps) {
   return (
     <section className={styles['section-chat']}>
       <div className={styles['new-chat-header']}>
-        <h1>To: </h1>
+        <h1>Chat with: </h1>
         <SearchComponent onSearch={searchUsers} />
         {showDropdown && (
           <ul className={styles['dropdown-ul']}>
@@ -89,7 +89,7 @@ export function NewChat({ onCreateSuccessful }: NewChatProps) {
         {selectedUsers.map((user) => (
           <UserPillComponent user={user} onRemove={onUserRemove} />
         ))}
-        <button onClick={submitCreation}>
+        <button onClick={submitCreation} className={styles['create-button']}>
           {submitLoading ? <LoadingPage></LoadingPage> : 'Create'}
         </button>
         {!!error && <span>There was a problem creating this conversation</span>}

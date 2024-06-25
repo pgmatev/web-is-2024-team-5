@@ -23,12 +23,12 @@
 .new-chat-button {
   background: var(--purple-bg);
   color: var(--dark-purple);
-  border-radius: 8px;
+  border-radius: 12px;
   border-color: var(--dark-purple);
   margin: 0px;
   padding: 0;
   height: 40px;
-  min-width: 80px;
+  min-width: 90px;
 }
 
 .chats-title {
