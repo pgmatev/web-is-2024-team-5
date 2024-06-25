@@ -1,4 +1,5 @@
 import { HttpService } from './http-service';
+import { User } from './user-service';
 
 // TODO: Abstract it so it's applicable to messages too
 export interface IPaginatedConversation {
@@ -18,11 +19,11 @@ export interface Message {
 
 export interface Conversation {
   id: string;
-  participants: string[];
+  participants: User[];
   messages: Message[];
   lastMessage?: Message;
   groupInfo?: {
-    groupName?: string;
+    name?: string;
     admin: string;
   };
   type: 'private' | 'group';
@@ -50,6 +51,17 @@ class ConversationService {
       },
     });
 
+    return result;
+  }
+
+  async getAllConversations(search?: string) {
+    const result = await this.http.get<Conversation[]>(`/conversations/all`, {
+      query: search
+        ? {
+            search,
+          }
+        : {},
+    });
     return result;
   }
 }

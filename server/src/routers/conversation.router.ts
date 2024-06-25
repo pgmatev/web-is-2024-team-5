@@ -54,21 +54,12 @@ conversationRouter.get(
   requestHandlerMiddleware(async (req, res) => {
     const currentUser = getUserFromRequestContext(req);
     const search = req.query['search'] as string;
-    const userIdsMatchingParticipantName: string[] = [];
 
-    let conversations: IConversation[] | undefined;
-
-    if (!search) {
-      conversations = await conversationService.getAllConversationsByUserId(
+    const conversations =
+      await conversationService.getAllConversationsBySearchParam(
         currentUser.id,
+        search,
       );
-    } else {
-      conversations =
-        await conversationService.getAllConversationsBySearchParam(
-          search,
-          currentUser.id,
-        );
-    }
 
     if (!conversations) {
       throw new NotFoundError('No conversations were found');
