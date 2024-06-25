@@ -1,0 +1,17 @@
+import { Message } from '../models/MessageModel';
+
+export class MessageService {
+  async getMessagesByConversationId(conversationId: string) {
+    const messages = await Message.find({ conversationId })
+      .sort({ createdAt: -1 })
+      .exec();
+
+    if (messages.length > 0) {
+      return messages.map((message) => message.toObject());
+    }
+
+    return [];
+  }
+}
+
+export const messageService = new MessageService();

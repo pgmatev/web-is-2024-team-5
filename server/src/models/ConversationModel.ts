@@ -65,6 +65,9 @@ ConversationSchema.set('toObject', {
     ret.id = ret._id.toString();
     delete ret._id;
     delete ret.__v;
+    ret.participants = ret.participants.map((participant: any) =>
+      participant.toString(),
+    );
     return ret;
   },
 });

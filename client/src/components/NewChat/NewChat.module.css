@@ -7,16 +7,28 @@
 }
 
 .new-chat-header {
-  background-color: var(--bg);
+  background-color: var(--purple-bg);
   display: flex;
   align-items: center;
+  padding-left: 8px;
   position: relative;
+}
+
+.new-chat-header h1 {
+  color: var(--dark-purple);
+  margin: 16px 0;
+}
+
+.new-chat-header input {
+  border-color: var(--dark-purple);
 }
 
 .new-chat-footer {
   display: flex;
   align-items: center;
   flex-grow: 1;
+  padding-left: 8px;
+  color: var(--dark-purple);
 }
 
 .dropdown-ul {
@@ -38,9 +50,19 @@
   padding: 8px;
   cursor: pointer;
   z-index: 1;
-  border-bottom: 1px solid var(--main-col);
+  border-bottom: 1px solid var(--dark-purple);
 }
 
 .dropdown-li:hover {
-  background-color: var(--bg);
+  background-color: var(--dark-purple);
+  color: white;
+}
+
+.new-chat-footer .create-button  {
+  background: var(--purple-bg);
+  color: var(--dark-purple);
+  border-radius: 8px;
+  border-color: var(--dark-purple);
+  padding: 8px;
+  margin: 8px;
 }

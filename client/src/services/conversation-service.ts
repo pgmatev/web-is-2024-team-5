@@ -17,7 +17,7 @@ export interface Message {
 }
 
 export interface Conversation {
-  id: number;
+  id: string;
   participants: string[];
   messages: Message[];
   lastMessage?: Message;
