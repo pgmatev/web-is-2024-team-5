@@ -27,6 +27,7 @@ export class ConversationService {
     const conversations = await Conversation.find({
       participants: { $all: userId },
     })
+      .select('-messages')
       .sort({ updatedAt: -1 })
       .skip((page - 1) * limit)
       .limit(limit)
@@ -41,6 +42,16 @@ export class ConversationService {
 
   async getTotalConversations() {
     return await Conversation.countDocuments().exec();
+  }
+
+  async getConversationById(conversationId: string) {
+    const conversation = await Conversation.findById(conversationId).exec();
+
+    if (conversation) {
+      return conversation.toObject();
+    }
+
+    return undefined;
   }
 
   async createConversation(

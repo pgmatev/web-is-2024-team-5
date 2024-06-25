@@ -36,17 +36,38 @@ export class UserService {
   }
 
   async getUsersBySearchParams(search: string) {
+    const terms = search
+      .split(' ')
+      .map((term) => term.trim())
+      .filter((term) => term.length > 0);
+
+    if (terms.length === 0) {
+      return [];
+    }
+
+    const regexTerms = terms.map((term) => new RegExp(term, 'i'));
+
+    const searchConditions = [
+      { firstName: { $in: regexTerms } },
+      { lastName: { $in: regexTerms } },
+      {
+        $or: terms.map((term) => ({
+          $or: [
+            { firstName: new RegExp(term, 'i') },
+            { lastName: new RegExp(term, 'i') },
+          ],
+        })),
+      },
+    ];
+
     const users = await User.find({
-      $or: [
-        { firstName: { $regex: search, $options: 'i' } },
-        { lastName: { $regex: search, $options: 'i' } },
-      ],
+      $or: searchConditions,
     }).exec();
 
     if (users) {
       return users.map((user) => user.toObject());
     }
 
-    return undefined;
+    return [];
   }
 }
