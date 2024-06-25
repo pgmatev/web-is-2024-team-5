@@ -5,7 +5,7 @@
   border-color: var(--bg);
   border-style: inset;
   background-color: var(--main-col);
-  max-height: 92vh;
+  max-height: 86vh;
 }
 
 .chats-header {

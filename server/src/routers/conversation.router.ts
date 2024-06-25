@@ -1,15 +1,19 @@
 import { Router } from 'express';
 import {
   ConversationService,
+  UserService,
   conversationInputSchema,
-  messageService,
+  MessageService,
 } from '../services';
 import { authMiddleware, requestHandlerMiddleware } from '../middlewares';
 import { BadRequestError, ForbiddenError, NotFoundError } from '../errors';
 import { getUserFromRequestContext } from '../helpers';
+import { IConversation } from '../models/ConversationModel';
 
 export const conversationRouter = Router();
 const conversationService = new ConversationService();
+const userService = new UserService();
+const messageService = new MessageService();
 
 conversationRouter.get(
   '/',
