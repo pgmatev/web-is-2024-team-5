@@ -1,8 +1,11 @@
 import { Router } from 'express';
-import { ConversationService, conversationInputSchema } from '../services';
+import {
+  ConversationService,
+  conversationInputSchema,
+  messageService,
+} from '../services';
 import { authMiddleware, requestHandlerMiddleware } from '../middlewares';
 import { BadRequestError, ForbiddenError, NotFoundError } from '../errors';
-import { IConversation } from '../models/ConversationModel';
 import { getUserFromRequestContext } from '../helpers';
 
 export const conversationRouter = Router();
@@ -72,5 +75,30 @@ conversationRouter.post(
     );
 
     res.send(conversation);
+  }),
+);
+
+conversationRouter.get(
+  `/:id/messages`,
+  authMiddleware,
+  requestHandlerMiddleware(async (req, res) => {
+    const id = req.params['id'];
+    const currentUser = getUserFromRequestContext(req);
+
+    const conversation = await conversationService.getConversationById(id);
+
+    if (!conversation) {
+      throw new NotFoundError('Conversation not found');
+    }
+
+    if (!conversation.participants.includes(currentUser.id)) {
+      throw new ForbiddenError('Cannot access this conversation');
+    }
+
+    const messages = await messageService.getMessagesByConversationId(
+      conversation.id,
+    );
+
+    res.send(messages);
   }),
 );

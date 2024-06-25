@@ -42,7 +42,6 @@ const MessageSchema: Schema<IMessage> = new Schema<IMessage>({
         ref: 'User',
       },
       emoji: String,
-      required: false,
     },
   ],
   readBy: [
@@ -55,5 +54,14 @@ const MessageSchema: Schema<IMessage> = new Schema<IMessage>({
 });
 
 MessageSchema.add(BaseSchema);
+
+MessageSchema.set('toObject', {
+  transform: (doc, ret, options) => {
+    ret.id = ret._id.toString();
+    delete ret._id;
+    delete ret.__v;
+    return ret;
+  },
+});
 
 export const Message = mongoose.model<IMessage>('Message', MessageSchema);
