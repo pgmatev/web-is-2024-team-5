@@ -1,4 +1,5 @@
 import styles from './ChatPage.module.css';
+import { ChatSettings } from '../ChatSettings/ChatSettings.tsx';
 import { ChatList } from '../ChatList/ChatList';
 import { Chat } from '../Chat/Chat';
 import { useCallback, useMemo, useState } from 'react';
@@ -26,24 +27,42 @@ export function ChatPage() {
     console.log(conversationId);
   }, []);
 
-  const render = useMemo(() => {
+  const renderRightSection = useMemo(() => {
     if (isNewChatPending)
       return <NewChat onCreateSuccessful={onCreateSuccessful} />;
     if (selectedConversation)
-      return <Chat conversation={selectedConversation} />;
+      return <Chat conversation={selectedConversation} onOpenSettings={function (): void {
+        throw new Error('Function not implemented.');
+      } } />;
     return <WelcomeChatWindow />;
   }, [isNewChatPending, onCreateSuccessful, selectedConversation]);
+
+  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+  const onOpenSettings = useCallback(() => {
+    setIsSettingsOpen(!isSettingsOpen);
+  }, [isSettingsOpen]);
+
+  // const renderLeftSection = useMemo(() => {
+  //   if(isSettingsOpen) {
+  //     return <ChatSettings
+  //     onOpenSettings={onOpenSettings} 
+  //     />
+  //   }
+  //   return <ChatList
+  //           onCreateNewClick={onCreateNewClick}
+  //           isNewChatPending={isNewChatPending}
+  //           onChatClick={onChatClick}
+  //         />
+  // }, [isNewChatPending, isSettingsOpen, onChatClick, onCreateNewClick, onOpenSettings]);
 
   return (
     <main className={styles['page-wrapper']}>
       <section className={styles['chatlist-section']}>
-        <ChatList
-          onCreateNewClick={onCreateNewClick}
-          isNewChatPending={isNewChatPending}
-          onChatClick={onChatClick}
-        />
+        <ChatSettings onOpenSettings={onOpenSettings} ></ChatSettings>  
       </section>
-      <section className={styles['chat-section']}>{render}</section>
+      <section className={styles['chat-section']}>
+        {renderRightSection}
+      </section>
     </main>
   );
 }

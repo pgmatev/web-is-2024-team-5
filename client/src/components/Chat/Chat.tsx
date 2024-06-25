@@ -159,9 +159,10 @@ const chat = {
 
 interface ChatProps {
   conversation: Conversation;
+  onOpenSettings: () => void;
 }
-
-export function Chat({ conversation }: ChatProps) {
+  
+export function Chat({ conversation, onOpenSettings }: ChatProps) {
   return (
     <section className={styles['section-chat']}>
       <div className={styles['chat']}>
@@ -173,7 +174,9 @@ export function Chat({ conversation }: ChatProps) {
       </div>
       <section className={styles['send-message-section']}>
         <form className={styles['messages-form']}>
-          <RiChatSettingsFill className={styles["ri-chat-settings-fill"]}></RiChatSettingsFill>
+          <button onClick={ () => onOpenSettings()}>
+            <RiChatSettingsFill className={styles["ri-chat-settings-fill"]}></RiChatSettingsFill>
+          </button>
           <input
             className={styles['message-input']}
             type="text"
