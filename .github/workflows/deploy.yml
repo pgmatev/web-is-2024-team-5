@@ -61,6 +61,7 @@ jobs:
 
           ssh -o StrictHostKeyChecking=no -i ec2-key.pem $EC2_SSH_USER@$EC2_HOST << 'EOF'
             # Pull the latest Docker images
+            echo $ECR_REGISTRY
             docker pull $ECR_REGISTRY/client:$IMAGE_TAG
             docker pull $ECR_REGISTRY/server:$IMAGE_TAG
 
