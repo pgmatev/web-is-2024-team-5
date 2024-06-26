@@ -2,19 +2,8 @@ import { useMemo } from 'react';
 import { Conversation } from '../../services/conversation-service';
 import styles from './ChatItem.module.css';
 import { useUser } from '../../contexts/UserContext';
-import { generateDisplayUsername } from '../../lib/generateDisplayUsername';
 import { RiLock2Fill } from '@remixicon/react';
-import { useGroupInfo } from '../../hooks/useGroupInfo.ts';
-
-export interface Chatm {
-  chatId: string;
-  chatName: string;
-  lastMessage: {
-    text: string;
-    senderName: string;
-    timestamp: Date;
-  };
-}
+import { getConversationName } from '../../lib/conversation-helper.ts';
 
 export interface ChatItemProps {
   chat: Conversation;
@@ -31,7 +20,9 @@ export function ChatItem({ chat, onClick, isChatItemSelected }: ChatItemProps) {
     return new Date(Date.now());
   }, [chat]);
 
-  const groupInfo = useGroupInfo(chat, user);
+  const groupInfo = useMemo(() => {
+    return getConversationName(chat, user!);
+  }, [chat, user]);
 
   return (
     <li

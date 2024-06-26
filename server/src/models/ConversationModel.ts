@@ -1,6 +1,5 @@
 import mongoose, { Schema } from 'mongoose';
 import { BaseSchema, IBase } from './BaseModel';
-import { string } from 'zod';
 
 export interface IConversation extends IBase {
   type: 'group' | 'private';
@@ -11,8 +10,7 @@ export interface IConversation extends IBase {
     adminId: mongoose.Types.ObjectId;
   };
   lastMessage?: {
-    id: mongoose.Types.ObjectId;
-    date: Date;
+    createdAt: Date;
     sender: mongoose.Types.ObjectId;
     text: string;
   };
@@ -49,7 +47,7 @@ const ConversationSchema: Schema<IConversation> = new Schema<IConversation>({
     },
   },
   lastMessage: {
-    date: Date,
+    createdAt: Date,
     sender: {
       type: Schema.Types.ObjectId,
       ref: 'User',

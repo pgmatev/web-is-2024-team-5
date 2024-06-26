@@ -2,8 +2,8 @@ import mongoose, { Schema } from 'mongoose';
 import { BaseSchema, IBase } from './BaseModel';
 
 export interface IMessage extends IBase {
-  conversationId: mongoose.Types.ObjectId;
-  senderId: mongoose.Types.ObjectId;
+  conversation: mongoose.Types.ObjectId;
+  sender: mongoose.Types.ObjectId;
   text?: string;
   attachments?: mongoose.Types.ObjectId[];
   reactions?: { userId: mongoose.Types.ObjectId; emoji: string }[];
@@ -11,13 +11,13 @@ export interface IMessage extends IBase {
 }
 
 const MessageSchema: Schema<IMessage> = new Schema<IMessage>({
-  conversationId: {
+  conversation: {
     type: Schema.Types.ObjectId,
     ref: 'Conversation',
     required: true,
     index: true,
   },
-  senderId: {
+  sender: {
     type: Schema.Types.ObjectId,
     ref: 'User',
     required: true,

@@ -2,182 +2,71 @@ import styles from './Chat.module.css';
 import { RiChatSettingsFill, RiSendPlaneFill } from '@remixicon/react';
 import { MessageItem } from '../MessageItem/MessageItem';
 import { Conversation } from '../../services/conversation-service.ts';
-
-const chat = {
-  converstationId: '1',
-  type: 'private',
-  participants: [
-    {
-      userId: '1',
-      firstName: 'Ivan',
-      lastName: 'Ivanov',
-    },
-  ],
-  lastMessage: {
-    id: '1',
-    date: new Date(Date.now()),
-    sender: {
-      userId: '1',
-      firstName: 'Ivan',
-      lastName: 'Ivanov',
-    },
-    text: 'Eho',
-  },
-  messages: [
-    {
-      id: '1',
-      date: new Date(Date.now()),
-      sender: {
-        userId: '1',
-        firstName: 'Ivan',
-        lastName: 'Ivanov',
-      },
-      text: 'Eho',
-    },
-    {
-      id: '2',
-      date: new Date(Date.now()),
-      sender: {
-        userId: '12',
-        firstName: 'Joro',
-        lastName: 'Ivanov',
-      },
-      text: 'Zdr',
-    },
-    {
-      id: '2',
-      date: new Date(Date.now()),
-      sender: {
-        userId: '12',
-        firstName: 'Joro',
-        lastName: 'Ivanov',
-      },
-      text: 'Zdrasaassaasasasasasasasa',
-    },
-    {
-      id: '1',
-      date: new Date(Date.now()),
-      sender: {
-        userId: '1',
-        firstName: 'Ivan',
-        lastName: 'Ivanov',
-      },
-      text: 'lorem ipsum',
-    },
-    {
-      id: '1',
-      date: new Date(Date.now()),
-      sender: {
-        userId: '1',
-        firstName: 'Ivan',
-        lastName: 'Ivanov',
-      },
-      text: 'lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum',
-    },
-    {
-      id: '1',
-      date: new Date(Date.now()),
-      sender: {
-        userId: '1',
-        firstName: 'Ivan',
-        lastName: 'Ivanov',
-      },
-      text: 'lorem ipsum',
-    },
-    {
-      id: '1',
-      date: new Date(Date.now()),
-      sender: {
-        userId: '1',
-        firstName: 'Ivan',
-        lastName: 'Ivanov',
-      },
-      text: 'lorem ipsum',
-    },
-    {
-      id: '1',
-      date: new Date(Date.now()),
-      sender: {
-        userId: '1',
-        firstName: 'Ivan',
-        lastName: 'Ivanov',
-      },
-      text: 'lorem ipsum',
-    },
-    {
-      id: '1',
-      date: new Date(Date.now()),
-      sender: {
-        userId: '1',
-        firstName: 'Ivan',
-        lastName: 'Ivanov',
-      },
-      text: 'lorem ipsum',
-    },
-    {
-      id: '1',
-      date: new Date(Date.now()),
-      sender: {
-        userId: '1',
-        firstName: 'Ivan',
-        lastName: 'Ivanov',
-      },
-      text: 'lorem ipsum',
-    },
-    {
-      id: '1',
-      date: new Date(Date.now()),
-      sender: {
-        userId: '1',
-        firstName: 'Ivan',
-        lastName: 'Ivanov',
-      },
-      text: 'lorem ipsum',
-    },
-    {
-      id: '1',
-      date: new Date(Date.now()),
-      sender: {
-        userId: '1',
-        firstName: 'Ivan',
-        lastName: 'Ivanov',
-      },
-      text: 'lorem ipsum',
-    },
-    {
-      id: '1',
-      date: new Date(Date.now()),
-      sender: {
-        userId: '1',
-        firstName: 'Ivan',
-        lastName: 'Ivanov',
-      },
-      text: 'lorem ipsum',
-    },
-  ],
-};
+import { useUser } from '../../contexts/UserContext.tsx';
+import { getConversationName } from '../../lib/conversation-helper.ts';
+import { FormEvent, useCallback, useMemo, useState } from 'react';
+import { OutgoingChatMessage } from '../../../../shared/types';
 
 interface ChatProps {
   conversation: Conversation;
+  sendMessage: (message: string) => void;
   onOpenSettings: () => void;
+  messages: OutgoingChatMessage[];
 }
-  
-export function Chat({ conversation, onOpenSettings }: ChatProps) {
+
+export function Chat({
+  conversation,
+  sendMessage,
+  onOpenSettings,
+  messages,
+}: ChatProps) {
+  const { user } = useUser();
+  const [newMessage, setNewMessage] = useState('');
+
+  const groupInfo = useMemo(() => {
+    return getConversationName(conversation, user!);
+  }, [conversation, user]);
+
+  const onSendMessage = useCallback(
+    (event: FormEvent<HTMLFormElement>) => {
+      event.preventDefault();
+
+      if (newMessage.trim()) {
+        sendMessage(newMessage);
+        setNewMessage('');
+      }
+    },
+    [newMessage, sendMessage],
+  );
+
   return (
     <section className={styles['section-chat']}>
+      <header className={styles['chat-header']}>
+        <h1 className={styles['chat-title']}>{groupInfo}</h1>
+      </header>
       <div className={styles['chat']}>
         <ul className={styles['messages']}>
-          {chat.messages.map((message) => (
-            <MessageItem message={message} />
+          {messages.map((message) => (
+            <MessageItem
+              key={new Date(message.createdAt).getTime()}
+              message={message}
+            />
           ))}
         </ul>
       </div>
       <section className={styles['send-message-section']}>
-        <form className={styles['messages-form']}>
+        <form
+          onSubmit={(event) => onSendMessage(event)}
+          className={styles['messages-form']}
+        >
           <button type="button" onClick={onOpenSettings}>
-            <RiChatSettingsFill className={styles["ri-chat-settings-fill"]}></RiChatSettingsFill>
+            <RiChatSettingsFill
+              className={styles['ri-chat-settings-fill']}
+            ></RiChatSettingsFill>
           </button>
           <input
+            value={newMessage}
+            onChange={(event) => setNewMessage(event.target.value)}
             className={styles['message-input']}
             type="text"
             placeholder="Type message..."

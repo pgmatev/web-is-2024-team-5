@@ -81,8 +81,8 @@ export class HttpService {
     return response.json();
   }
 
-  async get<T>(path: string, { query }: RequestOptions): Promise<T> {
-    return this.request('GET', path, { query });
+  async get<T>(path: string, options?: RequestOptions): Promise<T> {
+    return this.request('GET', path, { query: options?.query });
   }
 
   async post<T>(path: string, options: RequestOptions): Promise<T> {

@@ -4,9 +4,7 @@
 }
 
 .search-input {
-  padding: 10px;
-  padding-right: 40px;
-  width: 300px;
+  padding: 10px 40px 10px 10px;
   border-radius: 25px;
   border-color: var(--bg);
 }
