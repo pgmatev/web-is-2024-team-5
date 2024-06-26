@@ -25,7 +25,7 @@
 }
 
 @media only screen and (max-width: 1000px) {
-    .sent, .received {
+    .sent, .received, .sent div, .received div {
         display: inline-table;
         display: flex;
         flex-direction: column;
