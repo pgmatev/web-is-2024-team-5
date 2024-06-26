@@ -1,10 +1,10 @@
 export type IncomingChatMessage = {
-  conversationId: string;
+  conversation: string;
   text?: string;
 };
 
 export type OutgoingChatMessage = {
-  conversationId: string;
+  conversation: string;
   sender: {
     id: string;
     email: string;

@@ -60,12 +60,12 @@ export function ChatPage() {
       if (!socketRef.current) return;
 
       socketRef.current.emit('message', {
-        conversationId: selectedConversation.id,
+        conversation: selectedConversation.id,
         text: message,
       });
 
       const newMessage: OutgoingChatMessage = {
-        conversationId: selectedConversation.id,
+        conversation: selectedConversation.id,
         text: message,
         sender: {
           id: user!.id,
@@ -92,11 +92,22 @@ export function ChatPage() {
     setConversations(conversationsResponse);
   });
 
-  const onChatClick = useCallback((conversation: Conversation) => {
-    setSelectedConversation(conversation);
-    setIsNewChatPending(false);
-    setMessages([]); // Fetch chat messages
+  const fetchMessages = useCallback(async (conversationId: string) => {
+    const messagesResponse =
+      await conversationService.getAllMessages(conversationId);
+    setMessages(messagesResponse);
   }, []);
+
+  const onChatClick = useCallback(
+    async (conversation: Conversation) => {
+      if (conversation.id === selectedConversation?.id) return;
+
+      setSelectedConversation(conversation);
+      setIsNewChatPending(false);
+      await fetchMessages(conversation.id);
+    },
+    [fetchMessages, selectedConversation?.id],
+  );
 
   const { trigger: onCreateSuccessful } = useAsyncAction(
     async (conversationId: string) => {

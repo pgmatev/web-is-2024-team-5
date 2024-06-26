@@ -1,5 +1,6 @@
 import { HttpService } from './http-service';
 import { User } from './user-service';
+import { TMessage } from '../types';
 
 // TODO: Abstract it so it's applicable to messages too
 export interface IPaginatedConversation {
@@ -63,6 +64,12 @@ class ConversationService {
         : {},
     });
     return result;
+  }
+
+  async getAllMessages(conversationId?: string) {
+    return await this.http.get<TMessage[]>(
+      `/conversations/${conversationId}/messages`,
+    );
   }
 }
 

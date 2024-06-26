@@ -2,7 +2,10 @@ import { Server, Socket } from 'socket.io';
 import { NextFunction, Request, Response } from 'express';
 import { authMiddleware } from '../middlewares';
 import { IUser, User } from '../models/UserModel';
-import { IncomingChatMessage } from '../../../shared/types';
+import {
+  IncomingChatMessage,
+  OutgoingChatMessage,
+} from '../../../shared/types';
 import { Conversation } from '../models/ConversationModel';
 import { Message } from '../models/MessageModel';
 
@@ -63,12 +66,10 @@ const onDisconnect = (io: Server, user: IUser) => {
 
 const onChatMessage = (user: IUser, io: Server, socket: Socket) => {
   return async (msg: IncomingChatMessage) => {
-    console.log(msg);
-
     const createdAt = new Date();
 
     const conversation = await Conversation.findByIdAndUpdate(
-      msg.conversationId,
+      msg.conversation,
       {
         $set: {
           lastMessage: {
@@ -81,22 +82,20 @@ const onChatMessage = (user: IUser, io: Server, socket: Socket) => {
       { new: true },
     ).populate<{ participants: IUser[] }>('participants');
 
-    console.log(conversation);
-
     if (!conversation) {
-      console.log(`Conversation ${msg.conversationId} not found.`);
+      console.log(`Conversation ${msg.conversation} not found.`);
       return;
     }
 
     await Message.create({
-      senderId: user.id,
-      conversationId: msg.conversationId,
+      sender: user.id,
+      conversation: msg.conversation,
       text: msg.text,
       createdAt,
     });
 
-    const messageToSend = {
-      conversationId: msg.conversationId,
+    const messageToSend: OutgoingChatMessage = {
+      conversation: msg.conversation,
       sender: {
         id: user.id,
         email: user.email,
@@ -117,8 +116,6 @@ const onChatMessage = (user: IUser, io: Server, socket: Socket) => {
     const onlineParticipants = conversation.participants.filter(
       (participant) => participant.isOnline && participant.id !== user.id,
     );
-
-    console.log(onlineParticipants);
 
     onlineParticipants.forEach((participant) => {
       io.to(`user:${participant.id}`).emit('message', messageToSend);
