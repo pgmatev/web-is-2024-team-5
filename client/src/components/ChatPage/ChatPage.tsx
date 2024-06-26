@@ -162,7 +162,7 @@ export function ChatPage() {
   return (
     <main className={styles['page-wrapper']}>
       <section className={styles['chatlist-section']}>
-        {isSettingsOpen ? (
+        {isSettingsOpen && selectedConversation ? (
           <ChatSettings
             conversation={selectedConversation}
             onOpenSettings={onOpenSettings}

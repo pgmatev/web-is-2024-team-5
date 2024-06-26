@@ -4,7 +4,8 @@ import { generateRegexTermsFromSearch } from '../helpers';
 import mongoose from 'mongoose';
 import _ from 'lodash';
 import { IUser } from '../models/UserModel';
-import { ForbiddenError, NotFoundError } from '../errors';
+import { BadRequestError, ForbiddenError, NotFoundError } from '../errors';
+import { ObjectId } from 'mongodb';
 
 export const conversationInputSchema = z.object({
   type: z.enum(['group', 'private']),
@@ -22,6 +23,13 @@ export const conversationInputSchema = z.object({
     // 1 to enable chat with yourself
     .min(1, { message: 'At least one participant is required' }),
 });
+
+export const groupInfoSchema = z.object({
+  name: z.string().optional(),
+  adminId: z.instanceof(ObjectId).optional(),
+});
+
+type GroupInfoInput = z.infer<typeof groupInfoSchema>;
 
 export class ConversationService {
   async getPaginatedConversationsByUserId(
@@ -184,22 +192,19 @@ export class ConversationService {
     return undefined;
   }
 
-  async updateConversationName(
+  async updateConversationGroupInfo(
     currentUser: IUser,
     conversationId: string,
-    newName: string,
+    groupInfo: Partial<IConversation['groupInfo']>,
   ) {
     const conversation = await Conversation.findById(conversationId).exec();
 
     if (!conversation) {
-      throw new NotFoundError('Conversation with this ID not found.');
+      throw new NotFoundError('Conversation not found.');
     }
 
-    // idk
-    if (!conversation.groupInfo?.adminId) {
-      throw new NotFoundError(
-        'Missing adminId in updateConversationName method.',
-      );
+    if (conversation.type !== 'group' || !conversation.groupInfo) {
+      throw new BadRequestError('Cannot update non-group conversations.');
     }
 
     if (currentUser.id !== conversation.groupInfo.adminId.toString()) {
@@ -208,10 +213,7 @@ export class ConversationService {
       );
     }
 
-    conversation.groupInfo = {
-      ...conversation.groupInfo,
-      name: newName,
-    };
+    conversation.groupInfo = { ...conversation.groupInfo, ...groupInfo };
 
     await conversation.save();
 

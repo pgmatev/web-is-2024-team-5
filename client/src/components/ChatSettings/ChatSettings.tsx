@@ -1,20 +1,26 @@
-import { RiArrowDownSLine, RiArrowRightSLine, RiEditLine, RiForbid2Fill, RiVolumeMuteFill } from '@remixicon/react';
+import {
+  RiArrowDownSLine,
+  RiArrowRightSLine,
+  RiEditLine,
+  RiForbid2Fill,
+  RiVolumeMuteFill,
+} from '@remixicon/react';
 import styles from './ChatSettings.module.css';
-import { useCallback, useMemo, useState } from 'react';
-import { Conversation, conversationService } from '../../services/conversation-service.ts';
+import { useCallback, useMemo, useRef, useState } from 'react';
+import {
+  Conversation,
+  conversationService,
+} from '../../services/conversation-service.ts';
 import { useGroupInfo } from '../../hooks/useGroupInfo.ts';
 import { useUser } from '../../contexts/UserContext.tsx';
-
+import { useAsyncAction } from '../../hooks/useAsyncAction';
 
 interface ChatSettingsProps {
-  conversation: Conversation | undefined,
+  conversation: Conversation;
   onOpenSettings: () => void;
-  // onOpenChatMembers: () => void;
-  // onOpenChatFiles: () => void;
-  // onOpenChatSecutity: () => void;
 }
 
-export function ChatSettings({ conversation, onOpenSettings }: ChatSettingsProps) {
+export function ChatSettings({ conversation }: ChatSettingsProps) {
   const [isChatMembersOpen, setIsChatMembersOpen] = useState(false);
   const onOpenChatMembers = useCallback(() => {
     setIsChatMembersOpen(!isChatMembersOpen);
@@ -23,27 +29,21 @@ export function ChatSettings({ conversation, onOpenSettings }: ChatSettingsProps
   const { user } = useUser();
   const [isEditingName, setIsEditingName] = useState(false);
 
-  // TODO: need to fix this (technically it can't be undefined as settings button only renders on a selected conversation)
-  if (!conversation) {
-    console.error('Conversation is undefined in ChatSettings component.');
-    throw new Error('Conversation is undefined in ChatSettings component.');
-  }
-  // TODO: need to fix this -> groupInfo.admin produces undefined
   const userIsAdmin = conversation.groupInfo?.adminId === user?.id;
 
   const groupInfo = useGroupInfo(conversation, user);
 
-  // not sure if correct because using useMemo() with useGroupInfo method
   const [newGroupName, setNewGroupName] = useState(groupInfo);
 
-  const handleNameChange = (event) => {
-    setNewGroupName(event.target.value);
-  };
+  const { trigger: onNameSubmit } = useAsyncAction(async () => {
+    await conversationService.updateConversationName(conversation.id, {
+      name: newGroupName,
+    });
 
-  const handleNameSubmit = async () => {
-    await conversationService.updateConversationName(conversation.id, newGroupName);
-    setIsEditingName(false);
-  };
+    if (conversation.groupInfo?.name) {
+      conversation.groupInfo.name = newGroupName;
+    }
+  });
 
   const renderChatMembers = useMemo(() => {
     if (isChatMembersOpen) {
@@ -60,15 +60,28 @@ export function ChatSettings({ conversation, onOpenSettings }: ChatSettingsProps
     return null;
   }, [isChatMembersOpen, conversation.participants]);
 
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  const onEditButtonClick = useCallback(() => {
+    setIsEditingName(!isEditingName);
+  }, [isEditingName]);
+
   //---------------------------------------------
   const [isOpenChatFiles, setIsOpenChatFiles] = useState(false);
   const onOpenChatFiles = useCallback(() => {
     setIsOpenChatFiles(!isOpenChatFiles);
+    if (inputRef.current) {
+      inputRef.current.focus();
+    }
   }, [isOpenChatFiles]);
 
   const renderChatFiles = useMemo(() => {
     if (isOpenChatFiles) {
-      return <h3 className={styles['media-files-h3']}>There are no media and files</h3>;
+      return (
+        <h3 className={styles['media-files-h3']}>
+          There are no media and files
+        </h3>
+      );
     }
     return;
   }, [isOpenChatFiles]);
@@ -81,16 +94,18 @@ export function ChatSettings({ conversation, onOpenSettings }: ChatSettingsProps
 
   const renderChatSecurity = useMemo(() => {
     if (isOpenChatSecutity) {
-      return <ul className={styles['chat-security-ul']}>
-        <li>
-          <RiVolumeMuteFill></RiVolumeMuteFill>
-          <h3>Mute chat</h3>
-        </li>
-        <li>
-          <RiForbid2Fill></RiForbid2Fill>
-          <h3>Leave chat</h3>
-        </li>
-      </ul>;
+      return (
+        <ul className={styles['chat-security-ul']}>
+          <li>
+            <RiVolumeMuteFill></RiVolumeMuteFill>
+            <h3>Mute chat</h3>
+          </li>
+          <li>
+            <RiForbid2Fill></RiForbid2Fill>
+            <h3>Leave chat</h3>
+          </li>
+        </ul>
+      );
     }
     return;
   }, [isOpenChatSecutity]);
@@ -98,45 +113,60 @@ export function ChatSettings({ conversation, onOpenSettings }: ChatSettingsProps
 
   return (
     <>
-      <input disabled value={groupInfo} className={styles['chat-name']}></input>
-      {userIsAdmin ?
-        <div className={styles['edit-chat-name']} onClick={() => setIsEditingName(!isEditingName)}>
+      <div className={styles['name-field']}>
+        <input
+          disabled={!isEditingName}
+          ref={inputRef}
+          value={isEditingName ? newGroupName : groupInfo}
+          onChange={(event) => setNewGroupName(event.target.value)}
+          className={styles['chat-name']}
+        />
+        {isEditingName && (
+          <button className={styles['submit-btn']} onClick={onNameSubmit}>
+            Save
+          </button>
+        )}
+      </div>
+      {userIsAdmin ? (
+        <div className={styles['edit-chat-name']} onClick={onEditButtonClick}>
           <RiEditLine className={styles['ri-edit-line']}></RiEditLine>
           <h2>Change group name</h2>
         </div>
-        : <></>}
+      ) : (
+        <></>
+      )}
 
-      {isEditingName ? (
-        <div className={styles['edit-chat-name']}>
-          <input className={styles['chat-name']}
-                 type="text"
-                 value={newGroupName}
-                 onChange={handleNameChange}
-                 placeholder="Enter new group name"
-          />
-          <button onClick={handleNameSubmit}>Save</button>
-        </div>
-      ) : <></>}
-
-      <button className={styles['chat-members']} onClick={() => onOpenChatMembers()}>
+      <button
+        className={styles['chat-members']}
+        onClick={() => onOpenChatMembers()}
+      >
         <h3>Chat members</h3>
-        {isChatMembersOpen
-          ? <RiArrowDownSLine></RiArrowDownSLine>
-          : <RiArrowRightSLine></RiArrowRightSLine>}
+        {isChatMembersOpen ? (
+          <RiArrowDownSLine></RiArrowDownSLine>
+        ) : (
+          <RiArrowRightSLine></RiArrowRightSLine>
+        )}
       </button>
       {renderChatMembers}
-      <button className={styles['chat-files']} onClick={() => onOpenChatFiles()}>
+      <button
+        className={styles['chat-files']}
+        onClick={() => onOpenChatFiles()}
+      >
         <h3>Media and files</h3>
-        {isOpenChatFiles
-          ? <RiArrowDownSLine></RiArrowDownSLine>
-          : <RiArrowRightSLine></RiArrowRightSLine>}
+        {isOpenChatFiles ? (
+          <RiArrowDownSLine></RiArrowDownSLine>
+        ) : (
+          <RiArrowRightSLine></RiArrowRightSLine>
+        )}
       </button>
       {renderChatFiles}
       <button className={styles['chat-security']} onClick={onOpenChatSecutity}>
         <h3>Security</h3>
-        {isOpenChatSecutity
-          ? <RiArrowDownSLine></RiArrowDownSLine>
-          : <RiArrowRightSLine></RiArrowRightSLine>}
+        {isOpenChatSecutity ? (
+          <RiArrowDownSLine></RiArrowDownSLine>
+        ) : (
+          <RiArrowRightSLine></RiArrowRightSLine>
+        )}
       </button>
       {renderChatSecurity}
     </>

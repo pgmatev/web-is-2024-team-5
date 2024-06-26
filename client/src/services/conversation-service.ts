@@ -25,7 +25,7 @@ export interface Conversation {
   lastMessage?: Message;
   groupInfo?: {
     name?: string;
-    admin: string;
+    adminId: string;
   };
   type: 'private' | 'group';
 }
@@ -66,13 +66,18 @@ class ConversationService {
     return result;
   }
 
-  async updateConversationName(conversationId: string, newName: string) {
-    const result = await this.http.post<Conversation>(`/conversations/rename`, {
-      body: {
-        conversationId: conversationId,
-        newName: newName,
+  async updateConversationName(
+    conversationId: string,
+    groupInfo: Partial<Conversation['groupInfo']>,
+  ) {
+    const result = await this.http.put<Conversation>(
+      `/conversations/${conversationId}`,
+      {
+        body: {
+          groupInfo,
+        },
       },
-    });
+    );
     return result;
   }
 

@@ -1,7 +1,7 @@
+import { getConversationName } from '../lib/conversation-helper';
 import { Conversation } from '../services/conversation-service.ts';
 import { User } from '../services/user-service.ts';
 import { useMemo } from 'react';
-import { generateDisplayUsername } from '../lib/generateDisplayUsername.ts';
 
 export const useGroupInfo = (chat: Conversation, user: User | undefined) => {
   return useMemo(() => {
@@ -24,9 +24,9 @@ export const useGroupInfo = (chat: Conversation, user: User | undefined) => {
     );
 
     if (participantsExcludingCurrentUser.length === 1) {
-      return `${generateDisplayUsername(participantsExcludingCurrentUser[0])}`;
+      return `${getConversationName(chat, user!)}`;
     }
 
     return 'Yourself';
-  }, [chat.groupInfo?.name, chat.participants, chat.type, user?.id]);
+  }, [chat, user]);
 };

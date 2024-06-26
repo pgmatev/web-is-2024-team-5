@@ -59,7 +59,11 @@ export function Chat({
           onSubmit={(event) => onSendMessage(event)}
           className={styles['messages-form']}
         >
-          <button type="button" onClick={onOpenSettings}>
+          <button
+            type="button"
+            onClick={onOpenSettings}
+            className={styles['settings-button']}
+          >
             <RiChatSettingsFill
               className={styles['ri-chat-settings-fill']}
             ></RiChatSettingsFill>

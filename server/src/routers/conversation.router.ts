@@ -4,6 +4,7 @@ import {
   UserService,
   conversationInputSchema,
   MessageService,
+  groupInfoSchema,
 } from '../services';
 import { authMiddleware, requestHandlerMiddleware } from '../middlewares';
 import { BadRequestError, ForbiddenError, NotFoundError } from '../errors';
@@ -103,17 +104,18 @@ conversationRouter.post(
   }),
 );
 
-conversationRouter.post(
-  '/rename',
+conversationRouter.put(
+  '/:id',
   authMiddleware,
   requestHandlerMiddleware(async (req, res) => {
-    const { conversationId, newName } = req.body;
+    const groupInfo = groupInfoSchema.parse(req.body['groupInfo']);
+    const id = req.params['id'];
     const currentUser = getUserFromRequestContext(req);
 
-    const conversation = await conversationService.updateConversationName(
+    const conversation = await conversationService.updateConversationGroupInfo(
       currentUser,
-      conversationId,
-      newName,
+      id,
+      groupInfo,
     );
 
     res.send(conversation);
