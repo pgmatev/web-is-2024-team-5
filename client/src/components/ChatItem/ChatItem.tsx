@@ -48,7 +48,7 @@ export function ChatItem({ chat, onClick, isChatItemSelected }: ChatItemProps) {
           {chat.type === 'private' && <RiLock2Fill />}
         </span>
         <span className={styles['contact-message']}>
-          {chat.lastMessage ? chat.lastMessage.text : 'Start conversation'}
+        {chat.lastMessage ? (chat.lastMessage.text.length > 60 ? chat.lastMessage.text.substring(0, 60) + '...' : chat.lastMessage.text) : 'Start conversation'}
         </span>
       </div>
       {date && (

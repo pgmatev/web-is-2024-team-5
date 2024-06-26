@@ -49,3 +49,29 @@
   scrollbar-color: var(--bg);
   scrollbar-width: thin;
 }
+
+@media only screen and (max-width: 1640px) {
+  .chats {
+    height: 66vh;
+  }
+}
+
+@media only screen and (max-width: 988px) {
+  .chats-header, chats-search {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .chats {
+    height: 56vh;
+  }
+
+}
+
+@media only screen and (max-width: 400px) {
+  .chats-section {
+      margin: 0;
+      padding: 2px;
+  }
+
+}

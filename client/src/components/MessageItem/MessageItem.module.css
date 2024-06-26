@@ -23,3 +23,24 @@
 .sent span, .received span {
     padding: 8px;
 }
+
+@media only screen and (max-width: 1000px) {
+    .sent, .received {
+        display: inline-table;
+        display: flex;
+        flex-direction: column;
+    }
+    .sent {
+        align-items: end;
+    }
+    .received {
+        align-items: start;
+    }
+
+    .message-text {
+        word-wrap: break-word;
+        overflow-wrap: break-word;
+        display: block;
+        width: 80%;
+    }
+}

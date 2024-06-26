@@ -8,6 +8,17 @@
   display: flex;
 }
 
+.chat-header {
+    background-color: var(--d-bg);
+    color: var(--dark-purple);
+    padding: 16px 10px;
+    border-bottom: 1px solid var(--main-col);
+}
+
+.chat-header h1 {
+    margin: 0;
+}
+
 .chat {
   overflow-y: scroll;
   scrollbar-color: var(--main-col);
