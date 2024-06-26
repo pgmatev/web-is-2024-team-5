@@ -10,7 +10,7 @@ COPY . .
 
 ARG API_URL
 
-ENV API_URL=${API_URL} 
+ENV API_URL=http://localhost:3000
 
 RUN npm run build
 
