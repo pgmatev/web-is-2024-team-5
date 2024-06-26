@@ -3,3 +3,4 @@ export * from './auth.middleware';
 export * from './self.middleware';
 export * from './request-handler.middleware';
 export * from './only-for-handshake.middleware';
+export * from './socket-auth.middleware';

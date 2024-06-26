@@ -38,6 +38,10 @@ export function ChatPage() {
     console.log('Connected to socket');
   };
 
+  const onError = (error: Error) => {
+    console.error(error);
+  };
+
   const addLastMessageAndSortConversations = useCallback(
     (message: OutgoingChatMessage) => {
       setConversations((prevConversations) => {
@@ -89,10 +93,12 @@ export function ChatPage() {
     socketLocal.connect();
     socketLocal.on('connect', onConnect);
     socketLocal.on('message', onMessage);
+    socketLocal.on('connect_error', onError);
 
     return () => {
       socketLocal.off('message', onMessage);
       socketLocal.off('connect', onConnect);
+      socketLocal.off('connect_error', onError);
       socketLocal.disconnect();
     };
   }, [onMessage]);

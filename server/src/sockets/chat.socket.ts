@@ -1,6 +1,4 @@
 import { Server, Socket } from 'socket.io';
-import { NextFunction, Request, Response } from 'express';
-import { authMiddleware } from '../middlewares';
 import { IUser, User } from '../models/UserModel';
 import {
   IncomingChatMessage,
@@ -8,8 +6,10 @@ import {
 } from '../../../shared/types';
 import { Conversation } from '../models/ConversationModel';
 import { Message } from '../models/MessageModel';
+import { socketAuthMiddleware } from '../middlewares';
 
 export const chatSocket = (io: Server) => {
+  io.use(socketAuthMiddleware);
   io.on('connection', (socket) => onConnection(io, socket));
 };
 
