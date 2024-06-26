@@ -10,8 +10,6 @@ import { Conversation } from '../models/ConversationModel';
 import { Message } from '../models/MessageModel';
 
 export const chatSocket = (io: Server) => {
-  io.engine.use(onlyForHandshake(authMiddleware));
-
   io.on('connection', (socket) => onConnection(io, socket));
 };
 
@@ -120,19 +118,5 @@ const onChatMessage = (user: IUser, io: Server, socket: Socket) => {
     onlineParticipants.forEach((participant) => {
       io.to(`user:${participant.id}`).emit('message', messageToSend);
     });
-  };
-};
-
-const onlyForHandshake = (
-  middleware: (req: Request, res: Response, next: NextFunction) => void,
-) => {
-  return (req: any, res: any, next: any) => {
-    const isHandshake = req._query.sid === undefined;
-
-    if (isHandshake) {
-      middleware(req, res, next);
-    } else {
-      next();
-    }
   };
 };

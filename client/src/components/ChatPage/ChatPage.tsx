@@ -94,19 +94,21 @@ export function ChatPage() {
     setConversations(conversationsResponse);
   });
 
-  const fetchMessages = useCallback(async (conversationId: string) => {
-    const messagesResponse =
-      await conversationService.getAllMessages(conversationId);
-    setMessages(messagesResponse);
-  }, []);
+  const { trigger: fetchMessages } = useAsyncAction(
+    async (conversationId: string) => {
+      const messagesResponse =
+        await conversationService.getAllMessages(conversationId);
+      setMessages(messagesResponse);
+    },
+  );
 
   const onChatClick = useCallback(
-    async (conversation: Conversation) => {
+    (conversation: Conversation) => {
       if (conversation.id === selectedConversation?.id) return;
 
       setSelectedConversation(conversation);
       setIsNewChatPending(false);
-      await fetchMessages(conversation.id);
+      fetchMessages(conversation.id);
     },
     [fetchMessages, selectedConversation?.id],
   );
