@@ -4,6 +4,7 @@ import { generateRegexTermsFromSearch } from '../helpers';
 import mongoose from 'mongoose';
 import _ from 'lodash';
 import { IUser } from '../models/UserModel';
+import { ForbiddenError, NotFoundError } from '../errors';
 
 export const conversationInputSchema = z.object({
   type: z.enum(['group', 'private']),
@@ -180,5 +181,39 @@ export class ConversationService {
     }
 
     return undefined;
+  }
+
+  async updateConversationName(
+    currentUser: IUser,
+    conversationId: string,
+    newName: string,
+  ) {
+    const conversation = await Conversation.findById(conversationId).exec();
+
+    if (!conversation) {
+      throw new NotFoundError('Conversation with this ID not found.');
+    }
+
+    // idk
+    if (!conversation.groupInfo?.adminId) {
+      throw new NotFoundError(
+        'Missing adminId in updateConversationName method.',
+      );
+    }
+
+    if (currentUser.id !== conversation.groupInfo.adminId.toString()) {
+      throw new ForbiddenError(
+        'You do not have permission to update this conversation.',
+      );
+    }
+
+    conversation.groupInfo = {
+      ...conversation.groupInfo,
+      name: newName,
+    };
+
+    await conversation.save();
+
+    return conversation.toObject();
   }
 }

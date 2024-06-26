@@ -174,7 +174,7 @@ export function Chat({ conversation, onOpenSettings }: ChatProps) {
       </div>
       <section className={styles['send-message-section']}>
         <form className={styles['messages-form']}>
-          <button type="button" onClick={ () => onOpenSettings()}>
+          <button type="button" onClick={onOpenSettings}>
             <RiChatSettingsFill className={styles["ri-chat-settings-fill"]}></RiChatSettingsFill>
           </button>
           <input

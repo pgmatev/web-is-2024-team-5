@@ -103,6 +103,23 @@ conversationRouter.post(
   }),
 );
 
+conversationRouter.post(
+  '/rename',
+  authMiddleware,
+  requestHandlerMiddleware(async (req, res) => {
+    const { conversationId, newName } = req.body;
+    const currentUser = getUserFromRequestContext(req);
+
+    const conversation = await conversationService.updateConversationName(
+      currentUser,
+      conversationId,
+      newName,
+    );
+
+    res.send(conversation);
+  }),
+);
+
 conversationRouter.get(
   `/:id/messages`,
   authMiddleware,

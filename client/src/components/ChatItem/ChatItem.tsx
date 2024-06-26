@@ -4,6 +4,7 @@ import styles from './ChatItem.module.css';
 import { useUser } from '../../contexts/UserContext';
 import { generateDisplayUsername } from '../../lib/generateDisplayUsername';
 import { RiLock2Fill } from '@remixicon/react';
+import { useGroupInfo } from '../../hooks/useGroupInfo.ts';
 
 export interface Chatm {
   chatId: string;
@@ -30,31 +31,7 @@ export function ChatItem({ chat, onClick, isChatItemSelected }: ChatItemProps) {
     return new Date(Date.now());
   }, [chat]);
 
-  const groupInfo = useMemo(() => {
-    if (chat.type === 'group') {
-      return (
-        chat.groupInfo?.name ??
-        chat.participants
-          .map((participant) => {
-            const initial = participant.lastName[0];
-            return `${participant.firstName} ${initial}.`;
-          })
-          .join(', ')
-      );
-    }
-
-    const participantsExcludingCurrentUser = chat.participants.filter(
-      (participant) => {
-        return participant.id !== user?.id;
-      },
-    );
-
-    if (participantsExcludingCurrentUser.length === 1) {
-      return `${generateDisplayUsername(participantsExcludingCurrentUser[0])}`;
-    }
-
-    return 'Yourself';
-  }, [chat.groupInfo?.name, chat.participants, chat.type, user?.id]);
+  const groupInfo = useGroupInfo(chat, user);
 
   return (
     <li

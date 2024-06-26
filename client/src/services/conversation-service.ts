@@ -64,6 +64,16 @@ class ConversationService {
     });
     return result;
   }
+
+  async updateConversationName(conversationId: string, newName: string) {
+    const result = await this.http.post<Conversation>(`/conversations/rename`, {
+      body: {
+        conversationId: conversationId,
+        newName: newName,
+      },
+    });
+    return result;
+  }
 }
 
 export const conversationService = new ConversationService();
