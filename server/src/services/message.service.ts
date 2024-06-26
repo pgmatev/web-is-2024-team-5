@@ -4,7 +4,7 @@ export class MessageService {
   async getMessagesByConversationId(conversationId: string) {
     const messages = await Message.find({ conversation: conversationId })
       .populate('sender')
-      .sort({ createdAt: -1 })
+      .sort({ createdAt: 1 })
       .exec();
 
     if (messages.length > 0) {

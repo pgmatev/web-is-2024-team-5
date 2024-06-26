@@ -4,7 +4,7 @@ import { MessageItem } from '../MessageItem/MessageItem';
 import { Conversation } from '../../services/conversation-service.ts';
 import { useUser } from '../../contexts/UserContext.tsx';
 import { getConversationName } from '../../lib/conversation-helper.ts';
-import { FormEvent, useCallback, useMemo, useState } from 'react';
+import { FormEvent, useCallback, useMemo, useRef, useState } from 'react';
 import { OutgoingChatMessage } from '../../../../shared/types';
 
 interface ChatProps {
@@ -27,6 +27,8 @@ export function Chat({
     return getConversationName(conversation, user!);
   }, [conversation, user]);
 
+  const messagesEndRef = useRef<HTMLDivElement>(null);
+
   const onSendMessage = useCallback(
     (event: FormEvent<HTMLFormElement>) => {
       event.preventDefault();
@@ -34,6 +36,7 @@ export function Chat({
       if (newMessage.trim()) {
         sendMessage(newMessage);
         setNewMessage('');
+        messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
       }
     },
     [newMessage, sendMessage],
@@ -52,6 +55,7 @@ export function Chat({
               message={message}
             />
           ))}
+          <div ref={messagesEndRef} />
         </ul>
       </div>
       <section className={styles['send-message-section']}>

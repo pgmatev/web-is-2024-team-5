@@ -4,6 +4,7 @@ import styles from './ChatItem.module.css';
 import { useUser } from '../../contexts/UserContext';
 import { RiLock2Fill } from '@remixicon/react';
 import { getConversationName } from '../../lib/conversation-helper.ts';
+import { formatDate } from '../../lib/date-helper';
 
 export interface ChatItemProps {
   chat: Conversation;
@@ -48,9 +49,7 @@ export function ChatItem({ chat, onClick, isChatItemSelected }: ChatItemProps) {
         </span>
       </div>
       {date && (
-        <span className={styles['message-time']}>
-          {date.toLocaleDateString()}
-        </span>
+        <span className={styles['message-time']}>{formatDate(date)}</span>
       )}
     </li>
   );

@@ -2,6 +2,7 @@ import { useMemo } from 'react';
 import styles from './MessageItem.module.css';
 import { OutgoingChatMessage } from '../../../../shared/types';
 import { useUser } from '../../contexts/UserContext.tsx';
+import { formatDate } from '../../lib/date-helper';
 
 interface MessageItemProps {
   message: OutgoingChatMessage;
@@ -24,7 +25,7 @@ export function MessageItem({ message }: MessageItemProps) {
           {message.sender.firstName}
         </span>
         <span className={styles['message-time']}>
-          {new Date(message.createdAt).toDateString()}
+          {formatDate(new Date(message.createdAt))}
         </span>
       </div>
       <span className={styles['message-text']}>{message.text}</span>
