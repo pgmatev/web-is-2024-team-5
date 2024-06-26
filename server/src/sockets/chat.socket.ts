@@ -4,11 +4,12 @@ import { authMiddleware } from '../middlewares';
 import { IUser, User } from '../models/UserModel';
 import { IncomingChatMessage } from '../../../shared/types';
 import { Conversation } from '../models/ConversationModel';
+import { Message } from '../models/MessageModel';
 
 export const chatSocket = (io: Server) => {
   io.engine.use(onlyForHandshake(authMiddleware));
 
-  io.of('/chat').on('connection', (socket) => onConnection(io, socket));
+  io.on('connection', (socket) => onConnection(io, socket));
 };
 
 const onConnection = async (io: Server, socket: Socket) => {
@@ -28,7 +29,7 @@ const onConnection = async (io: Server, socket: Socket) => {
 
   console.log(`User ${user.email} connected.`);
 
-  socket.on('chatMessage', onChatMessage(user, io, socket));
+  socket.on('message', onChatMessage(user, io, socket));
 
   socket.on('disconnect', onDisconnect(io, user));
 
@@ -62,80 +63,67 @@ const onDisconnect = (io: Server, user: IUser) => {
 
 const onChatMessage = (user: IUser, io: Server, socket: Socket) => {
   return async (msg: IncomingChatMessage) => {
-    // if (msg.isGroup) {
-    //   handleGroupMessage(user, msg);
-    //   return;
-    // }
+    console.log(msg);
 
-    await handleDirectMessage(user, msg, io, socket);
-  };
-};
+    const createdAt = new Date();
 
-const handleDirectMessage = async (
-  user: IUser,
-  msg: IncomingChatMessage,
-  io: Server,
-  socket: Socket,
-) => {
-  console.log(
-    `User ${user.email} sent message to conversation ${msg.conversationId}: "${msg.message}"`,
-  );
+    const conversation = await Conversation.findByIdAndUpdate(
+      msg.conversationId,
+      {
+        $set: {
+          lastMessage: {
+            sender: user.id,
+            text: msg.text,
+            createdAt,
+          },
+        },
+      },
+      { new: true },
+    ).populate<{ participants: IUser[] }>('participants');
 
-  // Fetch the recipients from the conversation
-  // const recipient = db.users.find((u) => u.id === msg.to);
-  const conversation = await Conversation.findById(msg.conversationId).populate(
-    'participants',
-  );
+    console.log(conversation);
 
-  if (!conversation) {
-    console.log(`Conversation ${msg.conversationId} not found.`);
-    return;
-  }
+    if (!conversation) {
+      console.log(`Conversation ${msg.conversationId} not found.`);
+      return;
+    }
 
-  if (!conversation.participants.length) {
-    console.log(`Conversation ${msg.conversationId} has no participants.`);
-    return;
-  }
+    await Message.create({
+      senderId: user.id,
+      conversationId: msg.conversationId,
+      text: msg.text,
+      createdAt,
+    });
 
-  // Save to database
-  // db.messages.push({
-  //   id: db.messages.length + 1,
-  //   timestamp: Date.now(),
-  //   sender: user.id,
-  //   conversation: msg.conversationId,
-  //   text: msg.message,
-  // });
+    const messageToSend = {
+      conversationId: msg.conversationId,
+      sender: {
+        id: user.id,
+        email: user.email,
+        firstName: user.firstName,
+        lastName: user.lastName,
+      },
+      text: msg.text,
+      createdAt,
+    };
 
-  // Filter the sockets in the currentUser's room and send
-  // to all except the one sending
-  const sockets = await io.in(`user:${user.id}`).fetchSockets();
+    const sockets = await io.in(`user:${user.id}`).fetchSockets();
 
-  sockets
-    .filter((s) => s.id !== socket.id)
-    .map((s) =>
-      s.emit('chatMessage', {
-        from: user.id,
-        conversationId: user.id,
-        message: msg.message,
-      }),
+    sockets
+      .filter((s) => s.id !== socket.id)
+      .map((s) => s.emit('message', messageToSend));
+
+    // Get all online participants except the sender
+    const onlineParticipants = conversation.participants.filter(
+      (participant) => participant.isOnline && participant.id !== user.id,
     );
 
-  // if (msg.to === user.id) {
-  //   return;
-  // }
-  //
-  // // Check if recipient is online
-  // if (!recipient.isOnline) {
-  //   console.log(`User ${msg.to} is offline.`);
-  //   return;
-  // }
+    console.log(onlineParticipants);
 
-  // Send message to the recipient
-  // io.to(`user:${msg.to}`).emit('chatMessage', {
-  //   from: user.id,
-  //   source: user.id,
-  //   message: msg.message,
-  // });
+    onlineParticipants.forEach((participant) => {
+      io.to(`user:${participant.id}`).emit('message', messageToSend);
+    });
+  };
 };
 
 const onlyForHandshake = (

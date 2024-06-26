@@ -25,6 +25,7 @@ const server = http.createServer(app);
 const io = new Server<ClientToServerEvents, ServerToClientEvents>(server, {
   cors: {
     origin: '*',
+    credentials: true,
   },
 });
 

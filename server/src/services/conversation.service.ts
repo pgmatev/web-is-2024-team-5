@@ -35,6 +35,7 @@ export class ConversationService {
       .sort({ updatedAt: -1 })
       .skip((page - 1) * limit)
       .limit(limit)
+      .populate('participants')
       .exec();
 
     if (conversations) {

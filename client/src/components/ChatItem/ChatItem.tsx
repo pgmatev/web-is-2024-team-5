@@ -2,18 +2,8 @@ import { useMemo } from 'react';
 import { Conversation } from '../../services/conversation-service';
 import styles from './ChatItem.module.css';
 import { useUser } from '../../contexts/UserContext';
-import { generateDisplayUsername } from '../../lib/generateDisplayUsername';
 import { RiLock2Fill } from '@remixicon/react';
-
-export interface Chatm {
-  chatId: string;
-  chatName: string;
-  lastMessage: {
-    text: string;
-    senderName: string;
-    timestamp: Date;
-  };
-}
+import { getConversationName } from '../../lib/conversation-helper.ts';
 
 export interface ChatItemProps {
   chat: Conversation;
@@ -31,30 +21,8 @@ export function ChatItem({ chat, onClick, isChatItemSelected }: ChatItemProps) {
   }, [chat]);
 
   const groupInfo = useMemo(() => {
-    if (chat.type === 'group') {
-      return (
-        chat.groupInfo?.name ??
-        chat.participants
-          .map((participant) => {
-            const initial = participant.lastName[0];
-            return `${participant.firstName} ${initial}.`;
-          })
-          .join(', ')
-      );
-    }
-
-    const participantsExcludingCurrentUser = chat.participants.filter(
-      (participant) => {
-        return participant.id !== user?.id;
-      },
-    );
-
-    if (participantsExcludingCurrentUser.length === 1) {
-      return `${generateDisplayUsername(participantsExcludingCurrentUser[0])}`;
-    }
-
-    return 'Yourself';
-  }, [chat.groupInfo?.name, chat.participants, chat.type, user?.id]);
+    return getConversationName(chat, user!);
+  }, [chat, user]);
 
   return (
     <li

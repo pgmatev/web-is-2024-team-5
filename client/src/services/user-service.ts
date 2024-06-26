@@ -5,6 +5,8 @@ export interface User {
   firstName: string;
   lastName: string;
   email: string;
+  isOnline: boolean;
+  isActive: boolean;
 }
 
 class UserService {

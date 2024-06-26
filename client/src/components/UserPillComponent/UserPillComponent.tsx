@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 import { User } from '../../services/user-service';
 import styles from './UserPillCompoent.module.css';
-import { generateDisplayUsername } from '../../lib/generateDisplayUsername';
+import { getUserName } from '../../lib/user-helper.ts';
 
 interface UserPillComponentProps {
   user: User;
@@ -10,7 +10,7 @@ interface UserPillComponentProps {
 
 export function UserPillComponent({ user, onRemove }: UserPillComponentProps) {
   const formattedUsername = useMemo(() => {
-    return generateDisplayUsername(user);
+    return getUserName(user);
   }, [user]);
 
   return (
