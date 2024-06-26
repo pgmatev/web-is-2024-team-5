@@ -37,13 +37,13 @@ export function ChatList({
         <h1 className={styles['chats-title']}>Chats</h1>
         <div className={styles['chats-search']}>
           <SearchComponent onSearch={onSearch} />
-          <button
+        </div>
+        <button
             className={styles['new-chat-button']}
             onClick={onCreateNewClick}
           >
             {isNewChatPending ? 'Exit' : 'Create new'}
           </button>
-        </div>
       </div>
       {conversationsLoading ? (
         <LoadingPage />

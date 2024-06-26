@@ -16,8 +16,18 @@
   color: var(--main-col);
 }
 
-@media only screen and (max-width: 480px) {
+@media only screen and (max-width: 688px) {
   .search-input {
-    width: 130px;
+    width: 160px;
+  }
+
+  .search-bar {
+    margin: 4px 4px;
+  }
+}
+
+@media only screen and (max-width: 530px) {
+  .search-input {
+    width: 120px;
   }
 }
