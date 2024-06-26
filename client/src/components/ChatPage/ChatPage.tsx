@@ -34,14 +34,54 @@ export function ChatPage() {
     setSelectedConversation(undefined);
   }, [isNewChatPending]);
 
-  const onMessage = (message: OutgoingChatMessage) => {
-    if (message.conversation !== selectedConversation?.id) return;
-    setMessages((prevMessages) => [...prevMessages, message]);
-  };
-
   const onConnect = () => {
     console.log('Connected to socket');
   };
+
+  const addLastMessageAndSortConversations = useCallback(
+    (message: OutgoingChatMessage) => {
+      setConversations((prevConversations) => {
+        return prevConversations
+          ?.map((conversation) => {
+            if (conversation.id === message.conversation) {
+              return {
+                ...conversation,
+                lastMessage: message,
+              };
+            } else {
+              return conversation;
+            }
+          })
+          .sort((a, b) => {
+            if (!a.lastMessage && !b.lastMessage) {
+              return 0;
+            }
+            if (!a.lastMessage) {
+              return 1;
+            }
+            if (!b.lastMessage) {
+              return -1;
+            }
+            return (
+              new Date(b.lastMessage.createdAt).getTime() -
+              new Date(a.lastMessage.createdAt).getTime()
+            );
+          });
+      });
+    },
+    [],
+  );
+
+  const onMessage = useCallback(
+    (message: OutgoingChatMessage) => {
+      addLastMessageAndSortConversations(message);
+
+      if (message.conversation !== selectedConversation?.id) return;
+
+      setMessages((prevMessages) => [...prevMessages, message]);
+    },
+    [addLastMessageAndSortConversations, selectedConversation],
+  );
 
   useEffect(() => {
     const socketLocal = socketRef.current;
@@ -55,7 +95,7 @@ export function ChatPage() {
       socketLocal.off('connect', onConnect);
       socketLocal.disconnect();
     };
-  }, []);
+  }, [onMessage]);
 
   const onSendMessage = useCallback(
     (message: string) => {
@@ -68,6 +108,7 @@ export function ChatPage() {
       });
 
       const newMessage: OutgoingChatMessage = {
+        id: Math.random().toString(),
         conversation: selectedConversation.id,
         text: message,
         sender: {
@@ -78,9 +119,11 @@ export function ChatPage() {
         },
         createdAt: new Date(),
       };
+
+      addLastMessageAndSortConversations(newMessage);
       setMessages((prevMessages) => [...prevMessages, newMessage]);
     },
-    [selectedConversation, user],
+    [addLastMessageAndSortConversations, selectedConversation, user],
   );
 
   const {
@@ -118,7 +161,6 @@ export function ChatPage() {
       setIsNewChatPending(false);
       await performFetchConversations();
 
-      // not working, idc
       setSelectedConversation(
         conversations?.find(
           (conversation) => conversation.id === conversationId,
