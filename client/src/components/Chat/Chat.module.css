@@ -104,3 +104,11 @@
   justify-content: center;
   color: inherit; /* Inherit the color from parent element */
 }
+
+@media only screen and (max-width: 588px) {
+  .ri-chat-settings-fill, .ri-send-plane-fill, .message-btn {
+    margin: 4px;
+    padding: 0;
+  }
+  
+}
