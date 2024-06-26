@@ -1,5 +1,5 @@
 import styles from './Chat.module.css';
-import { RiSendPlaneFill } from '@remixicon/react';
+import { RiChatSettingsFill, RiSendPlaneFill } from '@remixicon/react';
 import { MessageItem } from '../MessageItem/MessageItem';
 import { Conversation } from '../../services/conversation-service.ts';
 import { useUser } from '../../contexts/UserContext.tsx';
@@ -10,10 +10,16 @@ import { OutgoingChatMessage } from '../../../../shared/types';
 interface ChatProps {
   conversation: Conversation;
   sendMessage: (message: string) => void;
+  onOpenSettings: () => void;
   messages: OutgoingChatMessage[];
 }
 
-export function Chat({ conversation, sendMessage, messages }: ChatProps) {
+export function Chat({
+  conversation,
+  sendMessage,
+  onOpenSettings,
+  messages,
+}: ChatProps) {
   const { user } = useUser();
   const [newMessage, setNewMessage] = useState('');
 
@@ -53,6 +59,15 @@ export function Chat({ conversation, sendMessage, messages }: ChatProps) {
           onSubmit={(event) => onSendMessage(event)}
           className={styles['messages-form']}
         >
+          <button
+            type="button"
+            onClick={onOpenSettings}
+            className={styles['settings-button']}
+          >
+            <RiChatSettingsFill
+              className={styles['ri-chat-settings-fill']}
+            ></RiChatSettingsFill>
+          </button>
           <input
             value={newMessage}
             onChange={(event) => setNewMessage(event.target.value)}

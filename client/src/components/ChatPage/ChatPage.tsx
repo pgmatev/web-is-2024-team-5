@@ -1,4 +1,5 @@
 import styles from './ChatPage.module.css';
+import { ChatSettings } from '../ChatSettings/ChatSettings.tsx';
 import { ChatList } from '../ChatList/ChatList';
 import { Chat } from '../Chat/Chat';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
@@ -131,6 +132,11 @@ export function ChatPage() {
     fetchConversations();
   }, [fetchConversations]);
 
+  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+  const onOpenSettings = useCallback(() => {
+    setIsSettingsOpen(!isSettingsOpen);
+  }, [isSettingsOpen]);
+
   const render = useMemo(() => {
     if (isNewChatPending)
       return <NewChat onCreateSuccessful={onCreateSuccessful} />;
@@ -138,6 +144,7 @@ export function ChatPage() {
       return (
         <Chat
           conversation={selectedConversation}
+          onOpenSettings={onOpenSettings}
           sendMessage={onSendMessage}
           messages={messages}
         />
@@ -147,6 +154,7 @@ export function ChatPage() {
     isNewChatPending,
     messages,
     onCreateSuccessful,
+    onOpenSettings,
     onSendMessage,
     selectedConversation,
   ]);
@@ -154,15 +162,22 @@ export function ChatPage() {
   return (
     <main className={styles['page-wrapper']}>
       <section className={styles['chatlist-section']}>
-        <ChatList
-          fetchConversations={fetchConversations}
-          conversations={conversations}
-          conversationsLoading={conversationsLoading}
-          onCreateNewClick={onCreateNewClick}
-          isNewChatPending={isNewChatPending}
-          onChatClick={onChatClick}
-          selectedConversation={selectedConversation}
-        />
+        {isSettingsOpen && selectedConversation ? (
+          <ChatSettings
+            conversation={selectedConversation}
+            onOpenSettings={onOpenSettings}
+          />
+        ) : (
+          <ChatList
+            fetchConversations={fetchConversations}
+            conversations={conversations}
+            conversationsLoading={conversationsLoading}
+            onCreateNewClick={onCreateNewClick}
+            isNewChatPending={isNewChatPending}
+            onChatClick={onChatClick}
+            selectedConversation={selectedConversation}
+          />
+        )}
       </section>
       <section className={styles['chat-section']}>{render}</section>
     </main>

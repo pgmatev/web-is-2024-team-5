@@ -1,12 +1,18 @@
 import { Router, Response, Request } from 'express';
 import { requestHandlerMiddleware } from '../middlewares';
-import { CreateUserSchema, UserService, createJwt } from '../services';
+import {
+  ConversationService,
+  CreateUserSchema,
+  UserService,
+  createJwt,
+} from '../services';
 import { ZodError } from 'zod';
 import * as bcrypt from 'bcrypt';
 import { BadRequestError, NotFoundError, UnauthorizedError } from '../errors';
 
 const authRouter: Router = Router();
 const userService = new UserService();
+const conversationService = new ConversationService();
 
 authRouter.post(
   '/register',
@@ -19,6 +25,9 @@ authRouter.post(
       const userInput = CreateUserSchema.parse(req.body);
       userInput.password = await bcrypt.hash(userInput.password, 10);
       const user = await userService.createUser(userInput);
+
+      await conversationService.createConversation([user.id], 'private');
+
       const token = createJwt(user._id);
       res.status(201).send({
         message: 'User registered successfully.',

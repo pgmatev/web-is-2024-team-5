@@ -4,6 +4,7 @@ import {
   UserService,
   conversationInputSchema,
   MessageService,
+  groupInfoSchema,
 } from '../services';
 import { authMiddleware, requestHandlerMiddleware } from '../middlewares';
 import { BadRequestError, ForbiddenError, NotFoundError } from '../errors';
@@ -97,6 +98,24 @@ conversationRouter.post(
       participants,
       type,
       type === 'group' ? currentUser.id : undefined,
+    );
+
+    res.send(conversation);
+  }),
+);
+
+conversationRouter.put(
+  '/:id',
+  authMiddleware,
+  requestHandlerMiddleware(async (req, res) => {
+    const groupInfo = groupInfoSchema.parse(req.body['groupInfo']);
+    const id = req.params['id'];
+    const currentUser = getUserFromRequestContext(req);
+
+    const conversation = await conversationService.updateConversationGroupInfo(
+      currentUser,
+      id,
+      groupInfo,
     );
 
     res.send(conversation);
