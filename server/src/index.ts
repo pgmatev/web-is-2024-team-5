@@ -6,6 +6,7 @@ import { IUser } from './models/UserModel';
 import { Server } from 'socket.io';
 import { chatSocket } from './sockets';
 import { ClientToServerEvents, ServerToClientEvents } from '../../shared/types';
+import { authMiddleware, onlyForHandshake } from './middlewares';
 
 declare global {
   namespace Express {
@@ -25,9 +26,11 @@ const server = http.createServer(app);
 const io = new Server<ClientToServerEvents, ServerToClientEvents>(server, {
   cors: {
     origin: '*',
+    credentials: true,
   },
 });
 
+io.engine.use(onlyForHandshake(authMiddleware));
 chatSocket(io);
 
 mongoose

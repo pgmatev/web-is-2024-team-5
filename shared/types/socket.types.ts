@@ -1,18 +1,24 @@
 export type IncomingChatMessage = {
-  conversationId: string;
-  message: string;
+  conversation: string;
+  text?: string;
 };
 
 export type OutgoingChatMessage = {
-  from: string;
-  message: string;
-  conversationId: string;
+  conversation: string;
+  sender: {
+    id: string;
+    email: string;
+    firstName: string;
+    lastName: string;
+  };
+  text?: string;
+  createdAt: Date;
 };
 
 export interface ClientToServerEvents {
-  chatMessage: (message: IncomingChatMessage) => void;
+  message: (message: IncomingChatMessage) => void;
 }
 
 export interface ServerToClientEvents {
-  chatMessage: (message: OutgoingChatMessage) => void;
+  message: (message: OutgoingChatMessage) => void;
 }

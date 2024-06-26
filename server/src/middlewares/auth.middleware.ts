@@ -1,15 +1,15 @@
-import { NextFunction, Request, Response } from 'express';
+import { NextFunction, Request, RequestHandler, Response } from 'express';
 import { config } from '../config';
 import jwt from 'jsonwebtoken';
 import { UserService } from '../services';
 
 const userService = new UserService();
 
-export async function authMiddleware(
+export const authMiddleware: RequestHandler = async (
   req: Request,
   res: Response,
   next: NextFunction,
-) {
+) => {
   const auth = req.headers.authorization;
   const { secret } = config.get('jwt');
 
@@ -39,4 +39,4 @@ export async function authMiddleware(
   req.user = user;
 
   next();
-}
+};
