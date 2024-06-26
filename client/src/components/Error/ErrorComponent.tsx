@@ -7,15 +7,20 @@ interface ErrorComponentProps {
   field?: string;
 }
 
-export const ErrorComponent: React.FC<ErrorComponentProps> = ({ error, field }) => {
+export const ErrorComponent: React.FC<ErrorComponentProps> = ({
+  error,
+  field,
+}) => {
   if (error instanceof InputError && field) {
     return (
       <div className={styles['error-list']}>
         {error.fieldErrors && error.fieldErrors[field] && (
           <ul>
-            {error.fieldErrors[field].map((errorMessage: string, index: number) => (
-              <li key={index}>{errorMessage}</li>
-            ))}
+            {error.fieldErrors[field]?.map(
+              (errorMessage: string, index: number) => (
+                <li key={index}>{errorMessage}</li>
+              ),
+            )}
           </ul>
         )}
       </div>
@@ -23,13 +28,8 @@ export const ErrorComponent: React.FC<ErrorComponentProps> = ({ error, field }) 
   }
 
   if (error instanceof HttpError) {
-    return (
-      <div className={styles['error-basic']}>
-        {error.message}
-      </div>
-    );
+    return <div className={styles['error-basic']}>{error.message}</div>;
   }
 
   return null;
 };
-
