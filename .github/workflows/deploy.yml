@@ -29,29 +29,27 @@ jobs:
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v1
 
-      - name: Build and push Docker images
+      - name: Build and push Docker image for client
         env:
           AWS_DEFAULT_REGION: ${{ secrets.AWS_REGION }}
         run: |
-          docker compose down --rmi all --volumes --remove-orphans
-          docker rmi $(docker images -q)
-          docker compose build
-          docker compose push
+          docker compose build client
+          echo  ${{ steps.login-ecr.outputs.registry }}/${{ secrets.ECR_CLIENT_REPOSITORY_NAME }}
+          docker tag web-is-2024-team-5-client:latest ${{ steps.login-ecr.outputs.registry }}/${{ secrets.ECR_CLIENT_REPOSITORY_NAME }}:latest
+          docker push ${{ steps.login-ecr.outputs.registry }}/${{ secrets.ECR_CLIENT_REPOSITORY_NAME }}:latest
 
-      - name: Tag and push Docker images to ECR
+      - name: Build and push Docker image for server
+        env:
+          AWS_DEFAULT_REGION: ${{ secrets.AWS_REGION }}
         run: |
-          image_info=$(docker images --format "{{.Repository}} {{.ID}}")
-          for line in $image_info; do
-            name=$(echo $line | awk '{print $1}')
-            id=$(echo $line | awk '{print $2}')
-            docker tag $name:latest ${{ steps.login-ecr.outputs.registry }}/${{ secrets.ECR_REPOSITORY_NAME }}/$name:latest
-            docker push ${{ steps.login-ecr.outputs.registry }}/${{ secrets.ECR_REPOSITORY_NAME }}/$name:latest
-          done
+          docker compose build server
+          docker tag web-is-2024-team-5-server:latest ${{ steps.login-ecr.outputs.registry }}/${{ secrets.ECR_SERVER_REPOSITORY_NAME }}:latest
+          docker push ${{ steps.login-ecr.outputs.registry }}/${{ secrets.ECR_SERVER_REPOSITORY_NAME }}:latest
 
       - name: Deploy Docker images on EC2
         env:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-          IMAGE_TAG: ${{ github.sha }}
+          IMAGE_TAG: latest
           EC2_INSTANCE_ID: ${{ secrets.EC2_INSTANCE_ID }}
           EC2_SSH_KEY: ${{ secrets.EC2_SSH_KEY }}
           EC2_SSH_USER: ${{ secrets.EC2_SSH_USER }}
