@@ -25,10 +25,10 @@
 
 .selected-chat-item {
   margin: 8px;
-  padding: 8px;
+  padding: 8px 22px 8px 10px;
   border-radius: 12px;
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
   justify-content: space-between;
   cursor: pointer;
   background-color: var(--main-col);
