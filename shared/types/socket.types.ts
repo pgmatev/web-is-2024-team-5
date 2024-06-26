@@ -4,6 +4,7 @@ export type IncomingChatMessage = {
 };
 
 export type OutgoingChatMessage = {
+  id: string;
   conversation: string;
   sender: {
     id: string;

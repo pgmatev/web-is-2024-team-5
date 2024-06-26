@@ -85,7 +85,7 @@ const onChatMessage = (user: IUser, io: Server, socket: Socket) => {
       return;
     }
 
-    await Message.create({
+    const message = await Message.create({
       sender: user.id,
       conversation: msg.conversation,
       text: msg.text,
@@ -93,6 +93,7 @@ const onChatMessage = (user: IUser, io: Server, socket: Socket) => {
     });
 
     const messageToSend: OutgoingChatMessage = {
+      id: message.id,
       conversation: msg.conversation,
       sender: {
         id: user.id,
