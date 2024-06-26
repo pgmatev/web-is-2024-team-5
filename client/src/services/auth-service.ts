@@ -27,10 +27,13 @@ class AuthService {
   }
 
   async register(params: UserRegister) {
-    await this.http.post<{ message: string }>('/auth/register', {
-      body: params,
-    });
-    // tokenStorage.setToken(body.token);
+    const body = await this.http.post<{ message: string; accessToken: string }>(
+      '/auth/register',
+      {
+        body: params,
+      },
+    );
+    tokenStorage.setToken(body.accessToken);
   }
 
   async logout() {

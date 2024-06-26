@@ -4,6 +4,8 @@ import { generateRegexTermsFromSearch } from '../helpers';
 import mongoose from 'mongoose';
 import _ from 'lodash';
 import { IUser } from '../models/UserModel';
+import { BadRequestError, ForbiddenError, NotFoundError } from '../errors';
+import { ObjectId } from 'mongodb';
 
 export const conversationInputSchema = z.object({
   type: z.enum(['group', 'private']),
@@ -21,6 +23,13 @@ export const conversationInputSchema = z.object({
     // 1 to enable chat with yourself
     .min(1, { message: 'At least one participant is required' }),
 });
+
+export const groupInfoSchema = z.object({
+  name: z.string().optional(),
+  adminId: z.instanceof(ObjectId).optional(),
+});
+
+type GroupInfoInput = z.infer<typeof groupInfoSchema>;
 
 export class ConversationService {
   async getPaginatedConversationsByUserId(
@@ -181,5 +190,33 @@ export class ConversationService {
     }
 
     return undefined;
+  }
+
+  async updateConversationGroupInfo(
+    currentUser: IUser,
+    conversationId: string,
+    groupInfo: Partial<IConversation['groupInfo']>,
+  ) {
+    const conversation = await Conversation.findById(conversationId).exec();
+
+    if (!conversation) {
+      throw new NotFoundError('Conversation not found.');
+    }
+
+    if (conversation.type !== 'group' || !conversation.groupInfo) {
+      throw new BadRequestError('Cannot update non-group conversations.');
+    }
+
+    if (currentUser.id !== conversation.groupInfo.adminId.toString()) {
+      throw new ForbiddenError(
+        'You do not have permission to update this conversation.',
+      );
+    }
+
+    conversation.groupInfo = { ...conversation.groupInfo, ...groupInfo };
+
+    await conversation.save();
+
+    return conversation.toObject();
   }
 }

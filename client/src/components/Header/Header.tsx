@@ -1,4 +1,3 @@
-
 import { useUser } from '../../contexts/UserContext';
 import styles from './Header.module.css';
 import { authService } from '../../services/auth-service';

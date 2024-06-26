@@ -20,7 +20,18 @@
 }
 
 .chat-item:hover {
-  background-color: #afc38f;
+  background-color: var(--d-bg);
+}
+
+.selected-chat-item {
+  margin: 8px;
+  padding: 8px;
+  border-radius: 12px;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  cursor: pointer;
+  background-color: var(--main-col);
 }
 
 .chat-item,
@@ -78,5 +89,4 @@
     margin: 4px;
     padding: 4px;
   }
-
 }

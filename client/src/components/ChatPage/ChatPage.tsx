@@ -1,4 +1,5 @@
 import styles from './ChatPage.module.css';
+import { ChatSettings } from '../ChatSettings/ChatSettings.tsx';
 import { ChatList } from '../ChatList/ChatList';
 import { Chat } from '../Chat/Chat';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
@@ -20,10 +21,6 @@ export function ChatPage() {
   const socketRef = useRef<Socket>(createSocket(tokenStorage.token));
 
   const [isNewChatPending, setIsNewChatPending] = useState(false);
-  const onCreateNewClick = useCallback(() => {
-    setIsNewChatPending(!isNewChatPending);
-    setSelectedConversation(undefined);
-  }, [isNewChatPending]);
 
   const [selectedConversation, setSelectedConversation] =
     useState<Conversation>();
@@ -32,9 +29,13 @@ export function ChatPage() {
 
   const [messages, setMessages] = useState<OutgoingChatMessage[]>([]);
 
+  const onCreateNewClick = useCallback(() => {
+    setIsNewChatPending(!isNewChatPending);
+    setSelectedConversation(undefined);
+  }, [isNewChatPending]);
+
   const onMessage = (message: OutgoingChatMessage) => {
     if (message.conversation !== selectedConversation?.id) return;
-
     setMessages((prevMessages) => [...prevMessages, message]);
   };
 
@@ -77,7 +78,6 @@ export function ChatPage() {
         },
         createdAt: new Date(),
       };
-
       setMessages((prevMessages) => [...prevMessages, newMessage]);
     },
     [selectedConversation, user],
@@ -110,7 +110,7 @@ export function ChatPage() {
       setIsNewChatPending(false);
       fetchMessages(conversation.id);
     },
-    [fetchMessages, selectedConversation?.id],
+    [fetchMessages, selectedConversation],
   );
 
   const { trigger: onCreateSuccessful } = useAsyncAction(
@@ -131,6 +131,11 @@ export function ChatPage() {
     fetchConversations();
   }, [fetchConversations]);
 
+  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+  const onOpenSettings = useCallback(() => {
+    setIsSettingsOpen(!isSettingsOpen);
+  }, [isSettingsOpen]);
+
   const render = useMemo(() => {
     if (isNewChatPending)
       return <NewChat onCreateSuccessful={onCreateSuccessful} />;
@@ -138,6 +143,7 @@ export function ChatPage() {
       return (
         <Chat
           conversation={selectedConversation}
+          onOpenSettings={onOpenSettings}
           sendMessage={onSendMessage}
           messages={messages}
         />
@@ -147,6 +153,7 @@ export function ChatPage() {
     isNewChatPending,
     messages,
     onCreateSuccessful,
+    onOpenSettings,
     onSendMessage,
     selectedConversation,
   ]);
@@ -154,15 +161,22 @@ export function ChatPage() {
   return (
     <main className={styles['page-wrapper']}>
       <section className={styles['chatlist-section']}>
-        <ChatList
-          fetchConversations={fetchConversations}
-          conversations={conversations}
-          conversationsLoading={conversationsLoading}
-          onCreateNewClick={onCreateNewClick}
-          isNewChatPending={isNewChatPending}
-          onChatClick={onChatClick}
-          selectedConversation={selectedConversation}
-        />
+        {isSettingsOpen && selectedConversation ? (
+          <ChatSettings
+            conversation={selectedConversation}
+            onOpenSettings={onOpenSettings}
+          />
+        ) : (
+          <ChatList
+            fetchConversations={fetchConversations}
+            conversations={conversations}
+            conversationsLoading={conversationsLoading}
+            onCreateNewClick={onCreateNewClick}
+            isNewChatPending={isNewChatPending}
+            onChatClick={onChatClick}
+            selectedConversation={selectedConversation}
+          />
+        )}
       </section>
       <section className={styles['chat-section']}>{render}</section>
     </main>

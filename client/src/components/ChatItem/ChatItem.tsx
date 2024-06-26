@@ -4,6 +4,7 @@ import styles from './ChatItem.module.css';
 import { useUser } from '../../contexts/UserContext';
 import { RiLock2Fill } from '@remixicon/react';
 import { getConversationName } from '../../lib/conversation-helper.ts';
+import { formatDate } from '../../lib/date-helper';
 
 export interface ChatItemProps {
   chat: Conversation;
@@ -17,7 +18,7 @@ export function ChatItem({ chat, onClick, isChatItemSelected }: ChatItemProps) {
     if (chat.lastMessage) {
       return new Date(chat.lastMessage.createdAt);
     }
-    return new Date(Date.now());
+    return undefined;
   }, [chat]);
 
   const groupInfo = useMemo(() => {
@@ -30,7 +31,10 @@ export function ChatItem({ chat, onClick, isChatItemSelected }: ChatItemProps) {
         styles[isChatItemSelected ? 'selected-chat-item' : 'chat-item']
       }
       data-channel-id={chat.id}
-      onClick={() => onClick(chat)}
+      onClick={() => {
+        console.log('CLICKED CHAT', chat.id);
+        onClick(chat);
+      }}
     >
       <div className={styles['chat-metadata']}>
         <span
@@ -48,9 +52,7 @@ export function ChatItem({ chat, onClick, isChatItemSelected }: ChatItemProps) {
         </span>
       </div>
       {date && (
-        <span className={styles['message-time']}>
-          {date.toLocaleDateString()}
-        </span>
+        <span className={styles['message-time']}>{formatDate(date)}</span>
       )}
     </li>
   );
