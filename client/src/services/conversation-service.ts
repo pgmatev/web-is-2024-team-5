@@ -28,6 +28,7 @@ export interface Conversation {
     adminId: string;
   };
   type: 'private' | 'group';
+  createdAt: string;
 }
 
 class ConversationService {

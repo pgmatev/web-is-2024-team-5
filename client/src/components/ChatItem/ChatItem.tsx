@@ -18,7 +18,7 @@ export function ChatItem({ chat, onClick, isChatItemSelected }: ChatItemProps) {
     if (chat.lastMessage) {
       return new Date(chat.lastMessage.createdAt);
     }
-    return new Date(Date.now());
+    return undefined;
   }, [chat]);
 
   const groupInfo = useMemo(() => {
@@ -31,7 +31,10 @@ export function ChatItem({ chat, onClick, isChatItemSelected }: ChatItemProps) {
         styles[isChatItemSelected ? 'selected-chat-item' : 'chat-item']
       }
       data-channel-id={chat.id}
-      onClick={() => onClick(chat)}
+      onClick={() => {
+        console.log('CLICKED CHAT', chat.id);
+        onClick(chat);
+      }}
     >
       <div className={styles['chat-metadata']}>
         <span

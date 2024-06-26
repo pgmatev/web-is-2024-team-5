@@ -21,10 +21,6 @@ export function ChatPage() {
   const socketRef = useRef<Socket>(createSocket(tokenStorage.token));
 
   const [isNewChatPending, setIsNewChatPending] = useState(false);
-  const onCreateNewClick = useCallback(() => {
-    setIsNewChatPending(!isNewChatPending);
-    setSelectedConversation(undefined);
-  }, [isNewChatPending]);
 
   const [selectedConversation, setSelectedConversation] =
     useState<Conversation>();
@@ -33,9 +29,13 @@ export function ChatPage() {
 
   const [messages, setMessages] = useState<OutgoingChatMessage[]>([]);
 
+  const onCreateNewClick = useCallback(() => {
+    setIsNewChatPending(!isNewChatPending);
+    setSelectedConversation(undefined);
+  }, [isNewChatPending]);
+
   const onMessage = (message: OutgoingChatMessage) => {
     if (message.conversation !== selectedConversation?.id) return;
-
     setMessages((prevMessages) => [...prevMessages, message]);
   };
 
@@ -78,7 +78,6 @@ export function ChatPage() {
         },
         createdAt: new Date(),
       };
-
       setMessages((prevMessages) => [...prevMessages, newMessage]);
     },
     [selectedConversation, user],
@@ -111,7 +110,7 @@ export function ChatPage() {
       setIsNewChatPending(false);
       fetchMessages(conversation.id);
     },
-    [fetchMessages, selectedConversation?.id],
+    [fetchMessages, selectedConversation],
   );
 
   const { trigger: onCreateSuccessful } = useAsyncAction(

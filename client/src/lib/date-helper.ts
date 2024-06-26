@@ -1,4 +1,8 @@
-export function formatDate(date: Date) {
+export function formatDate(date?: Date) {
+  if (!date) {
+    return '';
+  }
+
   const today = new Date();
   if (
     date.getDate() === today.getDate() &&
