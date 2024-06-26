@@ -31,10 +31,7 @@ export function ChatItem({ chat, onClick, isChatItemSelected }: ChatItemProps) {
         styles[isChatItemSelected ? 'selected-chat-item' : 'chat-item']
       }
       data-channel-id={chat.id}
-      onClick={() => {
-        console.log('CLICKED CHAT', chat.id);
-        onClick(chat);
-      }}
+      onClick={() => onClick(chat)}
     >
       <div className={styles['chat-metadata']}>
         <span
@@ -48,7 +45,11 @@ export function ChatItem({ chat, onClick, isChatItemSelected }: ChatItemProps) {
           {chat.type === 'private' && <RiLock2Fill />}
         </span>
         <span className={styles['contact-message']}>
-        {chat.lastMessage ? (chat.lastMessage.text.length > 60 ? chat.lastMessage.text.substring(0, 60) + '...' : chat.lastMessage.text) : 'Start conversation'}
+          {chat.lastMessage?.text
+            ? chat.lastMessage.text.length > 60
+              ? chat.lastMessage.text.substring(0, 60) + '...'
+              : chat.lastMessage.text
+            : 'Start conversation'}
         </span>
       </div>
       {date && (

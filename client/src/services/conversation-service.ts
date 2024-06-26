@@ -11,18 +11,11 @@ export interface IPaginatedConversation {
   conversations: Conversation[];
 }
 
-export interface Message {
-  id: string;
-  text: string;
-  sender: string;
-  createdAt: string;
-}
-
 export interface Conversation {
   id: string;
   participants: User[];
-  messages: Message[];
-  lastMessage?: Message;
+  messages: string[];
+  lastMessage?: TMessage;
   groupInfo?: {
     name?: string;
     adminId: string;

@@ -11,6 +11,12 @@ export const authMiddleware: RequestHandler = async (
   next: NextFunction,
 ) => {
   const auth = req.headers.authorization;
+
+  if (!auth) {
+    res.status(401).send({ message: 'Unauthorized' });
+    return;
+  }
+
   const { secret } = config.get('jwt');
 
   if (!auth?.startsWith('Bearer ')) {

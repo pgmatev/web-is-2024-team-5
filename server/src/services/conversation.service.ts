@@ -2,7 +2,6 @@ import { z } from 'zod';
 import { Conversation, IConversation } from '../models/ConversationModel';
 import { generateRegexTermsFromSearch } from '../helpers';
 import mongoose from 'mongoose';
-import _ from 'lodash';
 import { IUser } from '../models/UserModel';
 import { BadRequestError, ForbiddenError, NotFoundError } from '../errors';
 import { ObjectId } from 'mongodb';
@@ -82,7 +81,7 @@ export class ConversationService {
     ];
 
     try {
-      const conversations = await Conversation.aggregate([
+      return await Conversation.aggregate([
         {
           $match: {
             $and: [
@@ -106,14 +105,33 @@ export class ConversationService {
         {
           $project: {
             'participants.password': 0,
-            // 'participants._id': 0, couldn't find a way to rename it
+            'participants.__v': 0,
             messages: 0,
           },
         },
         {
           $unwind: '$participants',
         },
-
+        {
+          $lookup: {
+            from: 'users',
+            localField: 'lastMessage.sender',
+            foreignField: '_id',
+            as: 'lastMessage.sender',
+          },
+        },
+        {
+          $project: {
+            'lastMessage.sender.password': 0,
+            'lastMessage.sender.__v': 0,
+          },
+        },
+        {
+          $unwind: {
+            path: '$lastMessage.sender',
+            preserveNullAndEmptyArrays: true,
+          },
+        },
         {
           $group: {
             _id: '$_id',
@@ -125,23 +143,34 @@ export class ConversationService {
             updatedAt: { $first: '$updatedAt' },
           },
         },
+        {
+          $addFields: {
+            id: '$_id',
+            participants: {
+              $map: {
+                input: '$participants',
+                as: 'participant',
+                in: {
+                  $mergeObjects: ['$$participant', { id: '$$participant._id' }],
+                },
+              },
+            },
+            'lastMessage.id': '$lastMessage._id',
+            'lastMessage.sender.id': '$lastMessage.sender._id',
+          },
+        },
+        {
+          $project: {
+            _id: 0,
+            'participants._id': 0,
+            'lastMessage._id': 0,
+            'lastMessage.sender._id': 0,
+            messages: 0,
+          },
+        },
       ])
         .sort({ updatedAt: -1 })
         .exec();
-
-      // The ugly result of not being able to rename _id
-      return conversations.map((conversation) =>
-        _.omit(
-          {
-            ...conversation,
-            id: conversation._id,
-            participants: conversation.participants.map((participant: IUser) =>
-              _.omit({ ...participant, id: participant._id }, '_id'),
-            ),
-          },
-          '_id',
-        ),
-      );
     } catch (err) {
       console.error(err);
       throw err;
