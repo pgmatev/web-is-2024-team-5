@@ -2,8 +2,8 @@ version: "3"
 services:
   server:
     build:
-      context: ./server
-      dockerfile: Dockerfile
+      context: ./
+      dockerfile: ./server/Dockerfile
     ports:
       - "3000:3000"
     environment:
@@ -13,8 +13,8 @@ services:
 
   client:
     build:
-      context: ./client
-      dockerfile: Dockerfile
+      context: ./
+      dockerfile: ./client/Dockerfile
     ports:
       - "5000:5000"
     depends_on:
