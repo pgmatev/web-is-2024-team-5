@@ -33,6 +33,8 @@ export function ChatPage() {
   const [messages, setMessages] = useState<OutgoingChatMessage[]>([]);
 
   const onMessage = (message: OutgoingChatMessage) => {
+    if (message.conversation !== selectedConversation?.id) return;
+
     setMessages((prevMessages) => [...prevMessages, message]);
   };
 
