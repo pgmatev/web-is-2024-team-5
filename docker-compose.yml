@@ -8,6 +8,8 @@ services:
       - "3000:3000"
     environment:
       - MONGODB_URI=${MONGODB_URI}
+      - JWT_SECRET=${JWT_SECRET}
+      - JWT_EXPIRE=${JWT_EXPIRE}
 
   client:
     build:
@@ -17,5 +19,3 @@ services:
       - "5000:5000"
     depends_on:
       - server
-    environment:
-      - API_URL=${API_URL}
