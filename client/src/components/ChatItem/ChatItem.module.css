@@ -9,7 +9,7 @@
 }
 
 .chat-item:hover{
-  background-color: #afc38f;
+  background-color:var(--d-bg);
 }
 
 .chat-item div {
