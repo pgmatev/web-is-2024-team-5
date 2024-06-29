@@ -3,7 +3,7 @@ name: Deploy Docker images to ECR and EC2
 on:
   push:
     branches:
-      - pipeline-setup
+      - main
 jobs:
   deploy:
     runs-on: ubuntu-latest
@@ -64,6 +64,8 @@ jobs:
             echo ${{ secrets.ECR_REPOSITORY_URI }}
             docker pull ${{ secrets.ECR_REPOSITORY_URI }}/client:$IMAGE_TAG
             docker pull ${{ secrets.ECR_REPOSITORY_URI }}/server:$IMAGE_TAG
+
+            docker ps -a
 
             # Stop and remove existing containers
             docker stop client || true
