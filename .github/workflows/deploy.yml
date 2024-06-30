@@ -28,16 +28,15 @@ jobs:
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v1
 
-      - name: Build and push Docker image for client
+      - name: Build and push Docker image 1/2
         env:
           AWS_DEFAULT_REGION: ${{ secrets.AWS_REGION }}
         run: |
           docker compose build client
-          echo  ${{ steps.login-ecr.outputs.registry }}/${{ secrets.ECR_CLIENT_REPOSITORY_NAME }}
           docker tag web-is-2024-team-5-client:latest ${{ steps.login-ecr.outputs.registry }}/${{ secrets.ECR_CLIENT_REPOSITORY_NAME }}:latest
           docker push ${{ steps.login-ecr.outputs.registry }}/${{ secrets.ECR_CLIENT_REPOSITORY_NAME }}:latest
 
-      - name: Build and push Docker image for server
+      - name: Build and push Docker image 2/2
         env:
           AWS_DEFAULT_REGION: ${{ secrets.AWS_REGION }}
         run: |
@@ -62,8 +61,8 @@ jobs:
           ssh -o StrictHostKeyChecking=no -i ec2-key.pem $EC2_SSH_USER@$EC2_HOST << 'EOF'
             # Pull the latest Docker images
             echo ${{ secrets.ECR_REPOSITORY_URI }}
-            docker pull ${{ secrets.ECR_REPOSITORY_URI }}/client:$IMAGE_TAG
-            docker pull ${{ secrets.ECR_REPOSITORY_URI }}/server:$IMAGE_TAG
+            docker pull ${{ steps.login-ecr.outputs.registry }}/${{ secrets.ECR_CLIENT_REPOSITORY_NAME }}:latest
+            docker pull  ${{ steps.login-ecr.outputs.registry }}/${{ secrets.ECR_CLIENT_REPOSITORY_NAME }}:latest
 
             docker ps -a
 
